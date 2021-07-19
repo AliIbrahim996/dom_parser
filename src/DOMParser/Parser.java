@@ -3,6 +3,7 @@ package DOMParser;
 import Model.User;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import javax.xml.transform.TransformerException;
 import java.io.File;
@@ -22,4 +23,6 @@ public interface Parser {
     Node create_user_element(Document doc, String id, String firstName, String lastName, String age, String gender);
 
     public List<User> getUserList();
+
+    NodeList getNodeList();
 }

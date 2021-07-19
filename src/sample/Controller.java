@@ -2,19 +2,22 @@ package sample;
 
 import DOMParser.DOMXmlParser;
 import DOMParser.Parser;
+import Model.User;
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class Controller {
     public Label element_label = new Label();
     public Button save = new Button();
-    public ComboBox elements = new ComboBox();
+    public ComboBox<String> elements = new ComboBox();
     public TextArea _text = new TextArea();
     public Button add = new Button();
     public Button read_file = new Button();
@@ -30,6 +33,7 @@ public class Controller {
 
     Parser parser = new DOMXmlParser(this);
     Process process = new Process(this);
+    List<User> users;
 
     public void on_read_file_clicked(ActionEvent event) {
         final File file;
@@ -54,6 +58,13 @@ public class Controller {
         Thread th2 = new Thread(() -> {
             try {
                 parser.parse(file);
+                users = parser.getUserList();
+                List<String> strings = new ArrayList<>();
+                for (User user : users) {
+                    strings.add("user " + user.getId());
+                }
+                elements.setItems(FXCollections.observableArrayList(strings));
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -97,6 +108,12 @@ public class Controller {
     }
 
     public void on_element_selected(ActionEvent event) {
+        int index = elements.getSelectionModel().getSelectedIndex();
+        User user = users.get(index);
+        first_name_.setText(user.getFirstName());
+        lase_name_.setText(user.getLastName());
+        age_.setText(user.getAge() + "");
+        gender_.setText(user.getGender() + "");
     }
 
 

@@ -34,9 +34,14 @@ public class DOMXmlParser implements Parser {
     Document doc;
 
 
-    public List<User> getUserList(){
+    public List<User> getUserList() {
         return userList;
     }
+
+    public NodeList getNodeList() {
+        return nodeList;
+    }
+
     @Override
     public void parse(File xml_file) throws InterruptedException {
         Thread.sleep(2000);
