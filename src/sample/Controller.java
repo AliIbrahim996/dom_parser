@@ -9,6 +9,7 @@ import javafx.stage.FileChooser;
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 public class Controller {
     public Label element_label = new Label();
@@ -69,6 +70,30 @@ public class Controller {
     }
 
     public void on_save_clicked(ActionEvent event) {
+        FileChooser.ExtensionFilter xml_files =
+                new FileChooser.ExtensionFilter("XML files", "*.xml");
+        FileChooser save_as = new FileChooser();
+        save_as.getExtensionFilters().addAll(xml_files);
+        String file_name = save_as.showSaveDialog(null).getName();
+        Thread th_process = new Thread(() -> {
+            try {
+                process.process();
+            } catch (InterruptedException ex) {
+                JOptionPane.showMessageDialog(null, "Error: " + Arrays.toString(ex.getStackTrace()));
+
+            }
+        });
+
+        Thread th_save_thread = new Thread(() -> {
+            try {
+                process.setParser(parser);
+                process.save_file(file_name);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        });
+        th_process.start();
+        th_save_thread.start();
     }
 
     public void on_element_selected(ActionEvent event) {

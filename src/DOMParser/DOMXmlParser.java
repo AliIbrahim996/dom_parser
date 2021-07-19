@@ -33,6 +33,10 @@ public class DOMXmlParser implements Parser {
     NodeList nodeList;
     Document doc;
 
+
+    public List<User> getUserList(){
+        return userList;
+    }
     @Override
     public void parse(File xml_file) throws InterruptedException {
         Thread.sleep(2000);
