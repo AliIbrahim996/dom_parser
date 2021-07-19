@@ -20,31 +20,46 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 import Model.User;
+import sample.Controller;
 
 public class DOMXmlParser implements Parser {
+    private Controller controller;
+
+    public DOMXmlParser(Controller controller) {
+        this.controller = controller;
+    }
+
+    List<User> userList;
+    NodeList nodeList;
+    Document doc;
+
     @Override
-    public void parse(File xml_file) {
-        DocumentBuilderFactory db_factory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder d_builder;
-        try {
-            d_builder = db_factory.newDocumentBuilder();
-            Document doc = d_builder.parse(xml_file);
-            doc.getDocumentElement().normalize();
-            System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
-            NodeList nodeList = doc.getElementsByTagName("User");
+    public void parse(File xml_file) throws InterruptedException {
+        Thread.sleep(2000);
+        synchronized (this) {
+            DocumentBuilderFactory db_factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder d_builder;
+            try {
+                d_builder = db_factory.newDocumentBuilder();
+                doc = d_builder.parse(xml_file);
+                doc.getDocumentElement().normalize();
+                System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
+                nodeList = doc.getElementsByTagName("User");
 
-            //XML is loaded as Document in memory,convert it to Object List
-            List<User> userList = new ArrayList();
+                //XML is loaded as Document in memory,convert it to Object List
+                userList = new ArrayList();
 
-            for (int i = 0; i < nodeList.getLength(); i++) {
-                userList.add(getUser(nodeList.item(i)));
+                for (int i = 0; i < nodeList.getLength(); i++) {
+                    userList.add(getUser(nodeList.item(i)));
+                }
+                //print User list information
+                for (User emp : userList) {
+                    System.out.println(emp.toString());
+                }
+                notify();
+            } catch (SAXException | ParserConfigurationException | IOException e1) {
+                e1.printStackTrace();
             }
-            //print User list information
-            for (User emp : userList) {
-                System.out.println(emp.toString());
-            }
-        } catch (SAXException | ParserConfigurationException | IOException e1) {
-            e1.printStackTrace();
         }
     }
 

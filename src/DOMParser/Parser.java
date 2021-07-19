@@ -7,15 +7,15 @@ import javax.xml.transform.TransformerException;
 import java.io.File;
 
 public interface Parser {
-    public void parse(File xml_file);
+    void parse(File xml_file) throws InterruptedException;
 
-    public void deleteElement(Document doc);
+    void deleteElement(Document doc);
 
-    public void updateElementValue(Document doc);
+    void updateElementValue(Document doc);
 
-    public void addElement(Document doc);
+    void addElement(Document doc);
 
-    public void write_xml_file(Document doc) throws TransformerException;
+    void write_xml_file(Document doc) throws TransformerException;
 
-    public Node create_user_element(Document doc, String id, String firstName, String lastName, String age, String gender);
+    Node create_user_element(Document doc, String id, String firstName, String lastName, String age, String gender);
 }
