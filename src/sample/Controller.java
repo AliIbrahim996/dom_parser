@@ -26,14 +26,14 @@ public class Controller {
     public Label last_name_label = new Label();
     public Label age_label = new Label();
     public Label gender_label = new Label();
-    public TextField first_name_;
-    public TextField lase_name_;
-    public TextField age_;
-    public TextField gender_;
+    public TextField first_name_ = new TextField();
+    public TextField lase_name_ = new TextField();
+    public TextField age_ = new TextField();
+    public TextField gender_ = new TextField();
 
     Parser parser = new DOMXmlParser(this);
     Process process = new Process(this);
-    List<User> users;
+    List<User> users = new ArrayList();
 
     public void on_read_file_clicked(ActionEvent event) {
         final File file;
