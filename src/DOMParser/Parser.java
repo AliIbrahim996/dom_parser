@@ -16,7 +16,7 @@ public interface Parser {
 
     void updateElementValue(Document doc);
 
-    void addElement(Document doc);
+    void addElement(Document doc, String element_name, String element_value, int index);
 
     void write_xml_file(Document doc) throws TransformerException;
 

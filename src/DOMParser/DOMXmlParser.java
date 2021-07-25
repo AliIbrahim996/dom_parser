@@ -111,17 +111,12 @@ public class DOMXmlParser implements Parser {
      * @param doc
      */
     @Override
-    public void addElement(Document doc) {
+    public void addElement(Document doc, String element_name, String element_value, int index) {
         NodeList users = doc.getElementsByTagName("User");
-        Element emp = null;
-
-        // loop for each user
-        for (int i = 0; i < users.getLength(); i++) {
-            emp = (Element) users.item(i);
-            Element salaryElement = doc.createElement("salary");
-            salaryElement.appendChild(doc.createTextNode("10000"));
-            emp.appendChild(salaryElement);
-        }
+        Element emp = (Element) users.item(index);
+        Element salaryElement = doc.createElement(element_name);
+        salaryElement.appendChild(doc.createTextNode(element_value));
+        emp.appendChild(salaryElement);
     }
 
     /**
