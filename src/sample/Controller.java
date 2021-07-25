@@ -64,7 +64,9 @@ public class Controller {
                     strings.add("user " + user.getId());
                 }
                 elements.setItems(FXCollections.observableArrayList(strings));
-
+                add.disableProperty().setValue(false);
+                save.disableProperty().setValue(false);
+                update.disableProperty().setValue(false);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

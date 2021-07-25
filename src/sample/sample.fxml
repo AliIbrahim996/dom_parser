@@ -20,7 +20,7 @@
             <Font name="Century" size="12.0"/>
         </font>
     </Button>
-    <Button fx:id="add" onAction="#on_add_clicked" accessibleText="run" layoutX="380.0" layoutY="65.0"
+    <Button fx:id="add" disable="true" onAction="#on_add_clicked" accessibleText="run" layoutX="380.0" layoutY="65.0"
             mnemonicParsing="false" style="-fx-background-color: #000099;" text="Add" textAlignment="CENTER"
             textFill="WHITE">
         <font>
@@ -28,7 +28,7 @@
         </font>
     </Button>
 
-    <Button fx:id="update" onAction="#on_update_clicked" accessibleText="run" layoutX="450.0" layoutY="65.0"
+    <Button fx:id="update" disable="true" onAction="#on_update_clicked" accessibleText="run" layoutX="450.0" layoutY="65.0"
             mnemonicParsing="false" style="-fx-background-color: #55A4D2;" text="Update" textAlignment="CENTER"
             textFill="WHITE">
         <font>
@@ -41,7 +41,7 @@
         </font>
     </Label>
     <ComboBox fx:id="elements" onAction="#on_element_selected" layoutX="375.0" layoutY="121.0" prefWidth="150.0"/>
-    <Button fx:id="save" layoutX="551.0" layoutY="66.0" mnemonicParsing="false" style="-fx-background-color: #00CCAA;"
+    <Button fx:id="save" disable="true" layoutX="551.0" layoutY="66.0" mnemonicParsing="false" style="-fx-background-color: #00CCAA;"
             text="Save" textFill="WHITE" onAction="#on_save_clicked">
         <font>
             <Font name="Centaur" size="14.0"/>
