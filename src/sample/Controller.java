@@ -17,7 +17,7 @@ import java.util.List;
 public class Controller {
     public Label element_label = new Label();
     public Button save = new Button();
-    public ComboBox<String> elements = new ComboBox();
+    public ComboBox<String> elements = new ComboBox<>();
     public TextArea _text = new TextArea();
     public Button add = new Button();
     public Button read_file = new Button();
@@ -30,10 +30,11 @@ public class Controller {
     public TextField lase_name_ = new TextField();
     public TextField age_ = new TextField();
     public TextField gender_ = new TextField();
+    public TreeView<String> dom_tree = new TreeView<>();
 
     Parser parser = new DOMXmlParser(this);
     Process process = new Process(this);
-    List<User> users = new ArrayList();
+    List<User> users = new ArrayList<>();
 
     public void on_read_file_clicked(ActionEvent event) {
         final File file;
@@ -59,10 +60,14 @@ public class Controller {
             try {
                 parser.parse(file);
                 users = parser.getUserList();
+                TreeItem<String> root = new TreeItem<>("Users");
                 List<String> strings = new ArrayList<>();
                 for (User user : users) {
+                    TreeItem<String> user_item = get_user_item(user);
+                    root.getChildren().add(user_item);
                     strings.add("user " + user.getId());
                 }
+                dom_tree.setRoot(root);
                 elements.setItems(FXCollections.observableArrayList(strings));
                 add.disableProperty().setValue(false);
                 save.disableProperty().setValue(false);
@@ -73,6 +78,16 @@ public class Controller {
         });
         th1.start();
         th2.start();
+    }
+
+    private TreeItem<String> get_user_item(User user) {
+        TreeItem<String> user_item = new TreeItem<>("user " + user.getId());
+        TreeItem<String> first_name = new TreeItem<>(user.getFirstName());
+        TreeItem<String> last_name = new TreeItem<>(user.getLastName());
+        TreeItem<String> age = new TreeItem<>(user.getGender());
+        TreeItem<String> gender = new TreeItem<>(user.getAge() + "");
+        user_item.getChildren().addAll(first_name, last_name, age, gender);
+        return user_item;
     }
 
     public void on_add_clicked(ActionEvent event) {
@@ -117,6 +132,4 @@ public class Controller {
         age_.setText(user.getAge() + "");
         gender_.setText(user.getGender() + "");
     }
-
-
 }

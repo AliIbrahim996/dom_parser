@@ -4,73 +4,62 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="379.0"
-      prefWidth="668.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="sample.Controller">
+<Pane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="379.0" prefWidth="668.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
     <Label layoutX="246.0" layoutY="14.0" text="DOM Parser" textAlignment="CENTER" textFill="#2737cc">
         <font>
-            <Font name="Consoles Bold" size="24.0"/>
+            <Font name="Consoles Bold" size="24.0" />
         </font>
     </Label>
-    <Button fx:id="read_file"
-            accessibleText="read_key" layoutX="290.0" layoutY="68.0" mnemonicParsing="false"
-            onAction="#on_read_file_clicked" style="-fx-background-color: #00AA00;" text="Read file"
-            textAlignment="CENTER" textFill="#f5f5f5">
+    <Button fx:id="read_file" accessibleText="read_key" layoutX="290.0" layoutY="68.0" mnemonicParsing="false" onAction="#on_read_file_clicked" style="-fx-background-color: #00AA00;" text="Read file" textAlignment="CENTER" textFill="#f5f5f5">
         <font>
-            <Font name="Century" size="12.0"/>
+            <Font name="Century" size="12.0" />
         </font>
     </Button>
-    <Button fx:id="add" disable="true" onAction="#on_add_clicked" accessibleText="run" layoutX="380.0" layoutY="65.0"
-            mnemonicParsing="false" style="-fx-background-color: #000099;" text="Add" textAlignment="CENTER"
-            textFill="WHITE">
+    <Button fx:id="add" accessibleText="run" disable="true" layoutX="380.0" layoutY="65.0" mnemonicParsing="false" onAction="#on_add_clicked" style="-fx-background-color: #000099;" text="Add" textAlignment="CENTER" textFill="WHITE">
         <font>
-            <Font name="Century" size="15.0"/>
+            <Font name="Century" size="15.0" />
         </font>
     </Button>
 
-    <Button fx:id="update" disable="true" onAction="#on_update_clicked" accessibleText="run" layoutX="450.0" layoutY="65.0"
-            mnemonicParsing="false" style="-fx-background-color: #55A4D2;" text="Update" textAlignment="CENTER"
-            textFill="WHITE">
+    <Button fx:id="update" accessibleText="run" disable="true" layoutX="450.0" layoutY="65.0" mnemonicParsing="false" onAction="#on_update_clicked" style="-fx-background-color: #55A4D2;" text="Update" textAlignment="CENTER" textFill="WHITE">
         <font>
-            <Font name="Century" size="15.0"/>
+            <Font name="Century" size="15.0" />
         </font>
     </Button>
     <Label fx:id="element_label" layoutX="287.0" layoutY="124.0" text="Elemnets" textAlignment="CENTER" wrapText="true">
         <font>
-            <Font name="Century" size="16.0"/>
+            <Font name="Century" size="16.0" />
         </font>
     </Label>
-    <ComboBox fx:id="elements" onAction="#on_element_selected" layoutX="375.0" layoutY="121.0" prefWidth="150.0"/>
-    <Button fx:id="save" disable="true" layoutX="551.0" layoutY="66.0" mnemonicParsing="false" style="-fx-background-color: #00CCAA;"
-            text="Save" textFill="WHITE" onAction="#on_save_clicked">
+    <ComboBox fx:id="elements" layoutX="375.0" layoutY="121.0" onAction="#on_element_selected" prefWidth="150.0" />
+    <Button fx:id="save" disable="true" layoutX="551.0" layoutY="66.0" mnemonicParsing="false" onAction="#on_save_clicked" style="-fx-background-color: #00CCAA;" text="Save" textFill="WHITE">
         <font>
-            <Font name="Centaur" size="14.0"/>
+            <Font name="Centaur" size="14.0" />
         </font>
     </Button>
-    <TextArea fx:id="_text" accessibleText="algo_text" editable="false" layoutX="14.0" layoutY="55.0" prefHeight="200.0"
-              prefWidth="258.0" wrapText="true"/>
     <Label fx:id="first_name_label" layoutX="50.0" layoutY="269.0" text="First Name">
         <font>
-            <Font name="Century" size="16.0"/>
+            <Font name="Century" size="16.0" />
         </font>
     </Label>
-    <TextField fx:id="first_name_" editable="false" layoutX="143.0" layoutY="267.0"/>
+    <TextField fx:id="first_name_" editable="false" layoutX="143.0" layoutY="267.0" />
     <Label fx:id="last_name_label" layoutX="320.0" layoutY="269.0" text="Last Name">
         <font>
-            <Font name="Century" size="16.0"/>
+            <Font name="Century" size="16.0" />
         </font>
     </Label>
-    <TextField fx:id="lase_name_" editable="false" layoutX="444.0" layoutY="267.0"/>
-    <TextField fx:id="age_" editable="false" layoutX="143.0" layoutY="321.0" prefHeight="25.0" prefWidth="65.0"/>
-    <TextField fx:id="gender_" editable="false" layoutX="444.0" layoutY="321.0"/>
+    <TextField fx:id="lase_name_" editable="false" layoutX="444.0" layoutY="267.0" />
+    <TextField fx:id="age_" editable="false" layoutX="143.0" layoutY="321.0" prefHeight="25.0" prefWidth="65.0" />
+    <TextField fx:id="gender_" editable="false" layoutX="444.0" layoutY="321.0" />
     <Label fx:id="age_label" layoutX="64.0" layoutY="323.0" text="Age">
         <font>
-            <Font name="Century" size="16.0"/>
+            <Font name="Century" size="16.0" />
         </font>
     </Label>
     <Label fx:id="gender_label" layoutX="319.0" layoutY="323.0" text="Gender">
         <font>
-            <Font name="Century" size="16.0"/>
+            <Font name="Century" size="16.0" />
         </font>
     </Label>
+   <TreeView fx:id="dom_tree" layoutX="5.0" layoutY="46.0" prefHeight="200.0" prefWidth="271.0" />
 </Pane>
