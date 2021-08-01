@@ -160,6 +160,8 @@ public class Controller {
         FileChooser.ExtensionFilter xml_files =
                 new FileChooser.ExtensionFilter("XML files", "*.xml");
         FileChooser save_as = new FileChooser();
+        String path = System.getProperty("user.dir");
+        save_as.setInitialDirectory(new File(path));
         save_as.getExtensionFilters().addAll(xml_files);
         String file_name = save_as.showSaveDialog(null).getName();
         Thread th_process = new Thread(() -> {
@@ -174,7 +176,7 @@ public class Controller {
         Thread th_save_thread = new Thread(() -> {
             try {
                 process.setParser(parser);
-                process.save_file(file_name);
+                process.save_file(file_name,parser);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

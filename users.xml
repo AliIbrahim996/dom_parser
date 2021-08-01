@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Users>
-    <User>
-        <id>1</id>
+    <User id = "1">
         <firstName>Ali</firstName>
         <lastName>Ibrahim</lastName>
         <age>25</age>
         <gender>Male</gender>
     </User>
-    <User>
-        <id>2</id>
+    <User id = "2">
         <firstName>Leen</firstName>
         <lastName>Mualla</lastName>
         <age>25</age>
