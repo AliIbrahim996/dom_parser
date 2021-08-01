@@ -6,6 +6,10 @@ import Model.User;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
+import javafx.scene.control.TreeView.EditEvent;
+import javafx.scene.control.cell.TextFieldTreeCell;
+import javafx.scene.control.TreeView;
+import javafx.event.EventHandler;
 import javafx.scene.control.*;
 import javafx.stage.FileChooser;
 
@@ -94,6 +98,26 @@ public class Controller {
         lase_name_.editableProperty().setValue(true);
         age_.editableProperty().setValue(true);
         gender_.editableProperty().setValue(true);
+        dom_tree.setEditable(true);
+        dom_tree.setCellFactory(TextFieldTreeCell.forTreeView());
+
+        // Set editing related event handlers (OnEditStart)
+        dom_tree.setOnEditStart(this::editStart);
+
+        // Set editing related event handlers (OnEditCommit)
+        dom_tree.setOnEditCommit((EventHandler<EditEvent<String>>) this::editCommit);
+
+        // Set editing related event handlers (OnEditCancel)
+        dom_tree.setOnEditCancel((EventHandler<EditEvent<String>>) this::editCancel);
+    }
+
+    private void editCancel(EditEvent event) {
+    }
+
+    private void editCommit(TreeView.EditEvent event) {
+    }
+
+    private void editStart(TreeView.EditEvent event) {
     }
 
     private TreeItem<String> get_user_item(User user) {
