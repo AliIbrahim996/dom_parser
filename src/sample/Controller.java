@@ -141,6 +141,7 @@ public class Controller {
             user.setGender(gender_.getText());
             TreeItem<String> user_item = get_user_item(user);
             dom_tree.getRoot().getChildren().add(user_item);
+            parser.create_user_element(user);
             tree_changed = true;
         }
 

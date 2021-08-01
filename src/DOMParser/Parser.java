@@ -22,6 +22,8 @@ public interface Parser {
 
     Node create_user_element(Document doc, String id, String firstName, String lastName, String age, String gender);
 
+    void create_user_element(User user);
+
     public List<User> getUserList();
 
     NodeList getNodeList();

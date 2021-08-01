@@ -175,6 +175,13 @@ public class DOMXmlParser implements Parser {
         return user;
     }
 
+    @Override
+    public void create_user_element(User user) {
+        Node new_user = create_user_element(doc, user.getId() + "", user.getFirstName(), user.getLastName(),
+                user.getAge() + "", user.getGender());
+        doc.getDocumentElement().appendChild(new_user);
+    }
+
     // utility method to create text node
     private static Node createUserElements(Document doc, Element element, String name, String value) {
         Element node = doc.createElement(name);
