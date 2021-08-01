@@ -3,6 +3,7 @@ package sample;
 import DOMParser.DOMXmlParser;
 import DOMParser.Parser;
 import Model.User;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
@@ -36,11 +37,14 @@ public class Controller {
     Process process = new Process(this);
     List<User> users = new ArrayList<>();
 
+    private static int id = 0;
+    private boolean tree_changed = false;
+
     public void on_read_file_clicked(ActionEvent event) {
         final File file;
         String path = System.getProperty("user.dir");
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialFileName(path);
+        fileChooser.setInitialDirectory(new File(path));
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Xml files", "*.xml")
         );
@@ -64,20 +68,32 @@ public class Controller {
                 List<String> strings = new ArrayList<>();
                 for (User user : users) {
                     TreeItem<String> user_item = get_user_item(user);
+                    id = user.getId();
                     root.getChildren().add(user_item);
                     strings.add("user " + user.getId());
                 }
-                dom_tree.setRoot(root);
+                Platform.runLater(() -> {
+                    dom_tree.setRoot(root);
+                });
                 elements.setItems(FXCollections.observableArrayList(strings));
-                add.disableProperty().setValue(false);
-                save.disableProperty().setValue(false);
-                update.disableProperty().setValue(false);
+                enable();
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         });
         th1.start();
         th2.start();
+    }
+
+    private void enable() {
+        add.disableProperty().setValue(false);
+        save.disableProperty().setValue(false);
+        update.disableProperty().setValue(false);
+        first_name_.editableProperty().setValue(true);
+        lase_name_.editableProperty().setValue(true);
+        age_.editableProperty().setValue(true);
+        gender_.editableProperty().setValue(true);
     }
 
     private TreeItem<String> get_user_item(User user) {
@@ -91,6 +107,24 @@ public class Controller {
     }
 
     public void on_add_clicked(ActionEvent event) {
+
+        if (validate()) {
+            User user = new User();
+            user.setFirstName(first_name_.getText());
+            user.setLastName(lase_name_.getText());
+            user.setAge(Integer.parseInt(age_.getText()));
+            user.setId(++id);
+            user.setGender(gender_.getText());
+            TreeItem<String> user_item = get_user_item(user);
+            dom_tree.getRoot().getChildren().add(user_item);
+            tree_changed = true;
+        }
+
+    }
+
+    private boolean validate() {
+        return !first_name_.getText().equals("") && !lase_name_.getText().equals("")
+                && !gender_.getText().equals("") && !age_.getText().equals("");
     }
 
 
