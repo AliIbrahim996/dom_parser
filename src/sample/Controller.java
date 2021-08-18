@@ -4,6 +4,8 @@ import DOMParser.DOMXmlParser;
 import DOMParser.Parser;
 import Model.User;
 import javafx.application.Platform;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.control.TreeView.EditEvent;
@@ -98,6 +100,8 @@ public class Controller {
         th2.start();
     }
 
+    int selected_node = 0;
+
     private void enable() {
         add.disableProperty().setValue(false);
         save.disableProperty().setValue(false);
@@ -112,19 +116,21 @@ public class Controller {
         // Set editing related event handlers (OnEditStart)
         dom_tree.setOnEditStart(this::editStart);
         dom_tree.setOnEditCommit(this::editCommit);
-        // Set editing related event handlers (OnEditCancel)
-        dom_tree.setOnEditCancel((EventHandler<EditEvent<String>>) this::editCancel);
+
+        //Selection model for tree
+        dom_tree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if ((TreeItem<String>) newValue != dom_tree.getRoot()) {
+                selected_node = dom_tree.getRoot().getChildren().indexOf((TreeItem<String>) newValue);
+                set_user(selected_node);
+            }
+        });
     }
 
-    private void editCancel(EditEvent event) {
-
-    }
-
-    int node_index = -1, leaf_index = -1;
     boolean flag = true;
     String message = "";
 
     private void editCommit(EditEvent event) {
+        int node_index = -1, leaf_index = -1;
         if (event.getTreeItem() == dom_tree.getRoot() || event.getTreeItem() == null)
             return;
         if (!root.getChildren().contains(event.getTreeItem())) {
@@ -184,6 +190,14 @@ public class Controller {
 
     }
 
+
+    public void on_delete_clicked(ActionEvent event) {
+        parser.delete_user_element(selected_node);
+        dom_tree.getRoot().getChildren().remove(selected_node);
+        dom_tree.getSelectionModel().select(0);
+        tree_changed = true;
+    }
+
     private void clearFields() {
         first_name_.clear();
         lase_name_.clear();
@@ -197,11 +211,13 @@ public class Controller {
     }
 
     public void on_save_clicked(ActionEvent event) {
+        Alert alert;
         if (!flag) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("There are errors in the dom tree please fix them:\n" + message);
-            alert.show();
-        } else {
+        } else if (tree_changed) {
+            alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setContentText("XML file saved successfully!");
             FileChooser.ExtensionFilter xml_files = new FileChooser.ExtensionFilter("XML3 files", "*.xml");
             FileChooser save_as = new FileChooser();
             String path = System.getProperty("user.dir");
@@ -221,6 +237,7 @@ public class Controller {
                 try {
                     process.setParser(parser);
                     process.save_file(file_name, parser);
+                    alert.show();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -232,6 +249,11 @@ public class Controller {
 
     public void on_element_selected(ActionEvent event) {
         int index = elements.getSelectionModel().getSelectedIndex();
+        set_user(index);
+
+    }
+
+    private void set_user(int index) {
         User user = users.get(index);
         first_name_.setText(user.getFirstName());
         lase_name_.setText(user.getLastName());

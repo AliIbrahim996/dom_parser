@@ -47,6 +47,12 @@ public class DOMXmlParser implements Parser {
         return document;
     }
 
+
+    @Override
+    public void delete_user_element(int index) {
+        document.getRootElement().getChildren("User").remove(index);
+    }
+
     @Override
     public void parse(File xml_file) throws InterruptedException {
         Thread.sleep(2000);

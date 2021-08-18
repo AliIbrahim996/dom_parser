@@ -13,6 +13,7 @@ public interface Parser {
 
 
     void create_user_element(User user);
+    void delete_user_element(int index);
 
     void update_user_element(int user_index,int property_index,String new_value);
 

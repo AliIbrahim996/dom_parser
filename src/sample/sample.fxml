@@ -63,9 +63,9 @@
     </Label>
     <TreeView fx:id="dom_tree" layoutX="5.0" layoutY="46.0" prefHeight="200.0" prefWidth="271.0"/>
     <ComboBox fx:id="gender_" layoutX="443.0" layoutY="321.0" prefWidth="150.0"/>
-    <Button mnemonicParsing="false" text="Button"/>
-    <Button fx:id="delete" disable="true" layoutX="509.0" layoutY="65.0" mnemonicParsing="false" style="-fx-background-color: #FF0000;"
-            text="Delete" textAlignment="CENTER" textFill="WHITE">
+    <Button fx:id="delete" disable="true" layoutX="509.0" layoutY="65.0" mnemonicParsing="false"
+            onAction="#on_delete_clicked" style="-fx-background-color: #FF0000;" text="Delete" textAlignment="CENTER"
+            textFill="WHITE">
         <font>
             <Font name="Century Bold" size="14.0"/>
         </font>

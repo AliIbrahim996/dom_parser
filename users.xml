@@ -15,7 +15,7 @@
   <User id="3">
     <firstName>aa</firstName>
     <lastName>aa</lastName>
-    <age>12</age>
-    <gender>male</gender>
+    <age>23</age>
+    <gender>Male</gender>
   </User>
 </Users>
