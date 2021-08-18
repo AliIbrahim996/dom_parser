@@ -4,23 +4,20 @@ import DOMParser.DOMXmlParser;
 import DOMParser.Parser;
 import Model.User;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.scene.control.TreeView.EditEvent;
 import javafx.scene.control.cell.TextFieldTreeCell;
 import javafx.scene.control.TreeView;
-import javafx.event.EventHandler;
 import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 import javax.swing.*;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 public class Controller {
     public Label element_label = new Label();
@@ -41,13 +38,14 @@ public class Controller {
     public TreeView<String> dom_tree = new TreeView<>();
     public Button encrypt = new Button();
     public Button delete = new Button();
+    public static Pane root_pane = new Pane();
     TreeItem<String> root;
     Parser parser = new DOMXmlParser(this);
     Process process = new Process(this);
     List<User> users = new ArrayList<>();
 
     private static int id = 0;
-    private boolean tree_changed = false;
+    private static boolean tree_changed = false;
 
     public void on_read_file_clicked(ActionEvent event) {
         final File file;
@@ -214,10 +212,12 @@ public class Controller {
         Alert alert;
         if (!flag) {
             alert = new Alert(Alert.AlertType.ERROR);
+            alert.initOwner(primary_stage.getOwner());
             alert.setContentText("There are errors in the dom tree please fix them:\n" + message);
         } else if (tree_changed) {
-            alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setContentText("XML file saved successfully!");
+            alert.initOwner(primary_stage.getOwner());
             FileChooser.ExtensionFilter xml_files = new FileChooser.ExtensionFilter("XML3 files", "*.xml");
             FileChooser save_as = new FileChooser();
             String path = System.getProperty("user.dir");
@@ -228,8 +228,9 @@ public class Controller {
                 try {
                     process.process();
                 } catch (InterruptedException ex) {
-                    JOptionPane.showMessageDialog(null, "Error: " + Arrays.toString(ex.getStackTrace()));
-
+                    Alert error_alert = new Alert(Alert.AlertType.ERROR);
+                    error_alert.setContentText("Error!\n" + Arrays.toString(ex.getStackTrace()));
+                    error_alert.show();
                 }
             });
 
@@ -237,13 +238,15 @@ public class Controller {
                 try {
                     process.setParser(parser);
                     process.save_file(file_name, parser);
-                    alert.show();
+                    tree_changed = false;
+                    Platform.runLater(alert::show);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
             });
             th_process.start();
             th_save_thread.start();
+
         }
     }
 
@@ -253,11 +256,35 @@ public class Controller {
 
     }
 
+
     private void set_user(int index) {
         User user = users.get(index);
         first_name_.setText(user.getFirstName());
         lase_name_.setText(user.getLastName());
         age_.setText(user.getAge() + "");
         gender_.getSelectionModel().select(user.getGender().toLowerCase().equals("male") ? 1 : 2);
+    }
+
+    public static Stage primary_stage;
+
+    public static void set_primary_stage(Stage stage) {
+        primary_stage = stage;
+    }
+
+    public static void close_window_event(WindowEvent t) {
+        if (tree_changed) {
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.getButtonTypes().remove(ButtonType.OK);
+            alert.getButtonTypes().add(ButtonType.CANCEL);
+            alert.getButtonTypes().add(ButtonType.YES);
+            alert.setTitle("Quit application");
+            alert.setContentText(String.format("Close without saving?"));
+            alert.initOwner(primary_stage.getOwner());
+            Optional<ButtonType> res = alert.showAndWait();
+            if (res.isPresent()) {
+                if (res.get().equals(ButtonType.CANCEL))
+                    t.consume();
+            }
+        }
     }
 }
