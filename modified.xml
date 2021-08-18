@@ -12,10 +12,4 @@
     <age>25</age>
     <gender>Female</gender>
   </User>
-  <User id="3">
-    <firstName>aa</firstName>
-    <lastName>aa</lastName>
-    <age>12</age>
-    <gender>male</gender>
-  </User>
 </Users>

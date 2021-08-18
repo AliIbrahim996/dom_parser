@@ -14,5 +14,7 @@ public interface Parser {
 
     void create_user_element(User user);
 
+    void update_user_element(int user_index,int property_index,String new_value);
+
     public List<User> getUserList();
 }

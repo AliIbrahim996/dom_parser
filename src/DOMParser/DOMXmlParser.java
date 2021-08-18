@@ -2,6 +2,7 @@ package DOMParser;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
+import org.jdom2.Text;
 import org.jdom2.input.DOMBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
@@ -102,9 +103,33 @@ public class DOMXmlParser implements Parser {
         Element element = new Element("User");
         element.setAttribute(new Attribute("id", user.getId() + ""));
         element.addContent(new Element("firstName").setText(user.getFirstName()));
-        element.addContent(new Element("lastName").setText(user.getFirstName()));
+        element.addContent(new Element("lastName").setText(user.getLastName()));
         element.addContent(new Element("age").setText(String.valueOf(user.getAge())));
-        element.addContent(new Element("gender").setText(user.getFirstName()));
+        element.addContent(new Element("gender").setText(user.getGender()));
         document.getRootElement().addContent(element);
+    }
+
+    @Override
+    public void update_user_element(int user_index, int property_index, String new_value) {
+        String property = get_selected_property(property_index);
+        if (property != null)
+            document.getRootElement().getChildren("User").
+                    get(user_index).getChildren(property)
+                    .get(0).setContent(new Text(new_value));
+    }
+
+    private String get_selected_property(int property_index) {
+        switch (property_index) {
+            case 0:
+                return "firstName";
+            case 1:
+                return "lastName";
+            case 2:
+                return "gender";
+            case 3:
+                return "age";
+            default:
+                return null;
+        }
     }
 }
