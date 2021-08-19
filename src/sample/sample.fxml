@@ -5,7 +5,7 @@
 <?import javafx.scene.text.*?>
 
 <Pane fx:id="root_pane" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="379.0" prefWidth="668.0" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
-    <Label layoutX="246.0" layoutY="14.0" text="DOM Parser" textAlignment="CENTER" textFill="#2737cc">
+    <Label layoutX="246.0" layoutY="14.0" text="User parser" textAlignment="CENTER" textFill="#2737cc">
         <font>
             <Font name="Consoles Bold" size="24.0" />
         </font>

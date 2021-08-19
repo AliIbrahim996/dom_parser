@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jnlp spec="1.0" xmlns:jfx="http://javafx.com" href="dom_project.jnlp">
+  <information>
+    <title>User parser</title>
+    <vendor>Unknown</vendor>
+    <description>User parser</description>
+    <offline-allowed/>
+  </information>
+  <resources>
+    <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="dom_project.jar" size="18976" download="eager" />
+    <jar href="jdom2-2.0.6.jar" size="304924" download="eager" />
+    <jar href="slf4j-api-1.7.25.jar" size="41203" download="eager" />
+    <jar href="xmlsec-2.1.1.jar" size="1129421" download="eager" />
+  </resources>
+  <jfx:javafx-desc  width="600" height="400" main-class="sample.Main"  name="User parser" />
+  <update check="background"/>
+</jnlp>
