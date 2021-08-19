@@ -1,8 +1,12 @@
 package DOMParser;
 
 import Model.User;
+import org.apache.xml.security.encryption.XMLEncryptionException;
+import org.jdom2.JDOMException;
+
 import javax.xml.transform.TransformerException;
 import java.io.File;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public interface Parser {
@@ -13,9 +17,12 @@ public interface Parser {
 
 
     void create_user_element(User user);
+
     void delete_user_element(int index);
 
-    void update_user_element(int user_index,int property_index,String new_value);
+    void encrypt_node(int index) throws Exception;
+
+    void update_user_element(int user_index, int property_index, String new_value);
 
     public List<User> getUserList();
 }

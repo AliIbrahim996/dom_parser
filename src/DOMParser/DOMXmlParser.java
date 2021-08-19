@@ -7,6 +7,7 @@ import org.jdom2.input.DOMBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
+import org.w3c.dom.Document;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
@@ -18,7 +19,6 @@ import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 import Model.User;
 import sample.Controller;
@@ -34,7 +34,6 @@ public class DOMXmlParser implements Parser {
     List<Element> nodeList;
     org.jdom2.Document document;
 
-
     public List<User> getUserList() {
         return userList;
     }
@@ -46,7 +45,6 @@ public class DOMXmlParser implements Parser {
     public org.jdom2.Document getDoc() {
         return document;
     }
-
 
     @Override
     public void delete_user_element(int index) {
@@ -65,12 +63,10 @@ public class DOMXmlParser implements Parser {
                 System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
                 document = new DOMBuilder().build(doc);
                 nodeList = document.getRootElement().getChildren("User");
-                //XML is loaded as Document in memory,convert it to Object List
                 userList = new ArrayList();
                 for (Element element : nodeList) {
                     userList.add(getUser(element));
                 }
-                //print User list information
                 for (User emp : userList) {
                     System.out.println(emp.toString());
                 }
@@ -137,5 +133,16 @@ public class DOMXmlParser implements Parser {
             default:
                 return null;
         }
+    }
+
+    @Override
+    public void encrypt_node(int index) throws Exception {
+        Document d = DocumentConverter.convertJDOMToDOM(document);
+        org.w3c.dom.Element e = (org.w3c.dom.Element) d.getElementsByTagName("User").item(index);
+        //Encrypt element at specified index
+        d = Encryptor.encrypt_element(d, e);
+        index++;
+        Controller.show_alert("User node " + index + " has been encrypted successfully!");
+        document = DocumentConverter.convertDOMtoJDOM(d);
     }
 }

@@ -47,6 +47,11 @@ public class Controller {
     private static int id = 0;
     private static boolean tree_changed = false;
 
+    boolean flag = true;
+    String message = "";
+    int selected_node = 0;
+    public static Stage primary_stage;
+
     public void on_read_file_clicked(ActionEvent event) {
         final File file;
         String path = System.getProperty("user.dir");
@@ -98,7 +103,13 @@ public class Controller {
         th2.start();
     }
 
-    int selected_node = 0;
+    public static void show_alert(String text) {
+        Alert alert;
+        alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.initOwner(primary_stage.getOwner());
+        alert.setContentText(text);
+        Platform.runLater(alert::show);
+    }
 
     private void enable() {
         add.disableProperty().setValue(false);
@@ -123,9 +134,6 @@ public class Controller {
             }
         });
     }
-
-    boolean flag = true;
-    String message = "";
 
     private void editCommit(EditEvent event) {
         int node_index = -1, leaf_index = -1;
@@ -256,7 +264,6 @@ public class Controller {
 
     }
 
-
     private void set_user(int index) {
         User user = users.get(index);
         first_name_.setText(user.getFirstName());
@@ -264,8 +271,6 @@ public class Controller {
         age_.setText(user.getAge() + "");
         gender_.getSelectionModel().select(user.getGender().toLowerCase().equals("male") ? 1 : 2);
     }
-
-    public static Stage primary_stage;
 
     public static void set_primary_stage(Stage stage) {
         primary_stage = stage;
@@ -285,6 +290,15 @@ public class Controller {
                 if (res.get().equals(ButtonType.CANCEL))
                     t.consume();
             }
+        }
+    }
+
+    public void on_encrypt_clicked(ActionEvent event) {
+        try {
+            parser.encrypt_node(selected_node);
+            tree_changed = true;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

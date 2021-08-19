@@ -1,15 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Users>
-  <User id="1">
-    <firstName>Ali</firstName>
-    <lastName>Ibrahim</lastName>
-    <age>25</age>
-    <gender>Male</gender>
-  </User>
-  <User id="2">
-    <firstName>Leen</firstName>
-    <lastName>Mualla</lastName>
-    <age>25</age>
-    <gender>Female</gender>
-  </User>
+    <User id="1">
+        <firstName>Ali</firstName>
+        <lastName>Ibrahim</lastName>
+        <age>25</age>
+        <gender>Male</gender>
+    </User>
+    <User id="2">
+        <xenc:EncryptedData xmlns:xenc="http://www.w3.org/2001/04/xmlenc#"
+                            Type="http://www.w3.org/2001/04/xmlenc#Content">
+            <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"/>
+            <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+                <xenc:EncryptedKey>
+                    <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#kw-tripledes"/>
+                    <xenc:CipherData>
+                        <xenc:CipherValue>3O1sneLN6K1cuzG/splbVUQUzgx5MeRjEH56Xy6O/BE=</xenc:CipherValue>
+                    </xenc:CipherData>
+                </xenc:EncryptedKey>
+            </ds:KeyInfo>
+            <xenc:CipherData>
+                <xenc:CipherValue>FmsC5C+u7MJc7YJraUG/W0OsVnYwDbvgc4PTpjlOm32jPerYclpHRkMtDjf895oS8fctwE/LXiyp&#xD;
+                    kDXMzl+lj/wdI5kEMWFB5bWv7aahPqMmdy2xa+tMibAQXf4XRyUrDeLrgMZrvw/MxTic29IhA7Ym&#xD;
+                    CBszpn8X3fwYF8aPeor+2X2ywuPRFppSZjra6wEp
+                </xenc:CipherValue>
+            </xenc:CipherData>
+        </xenc:EncryptedData>
+    </User>
+    <User id="3">
+        <firstName>aa</firstName>
+        <lastName>aa</lastName>
+        <age>23</age>
+        <gender>Male</gender>
+    </User>
 </Users>

@@ -7,6 +7,8 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="jdom2-2.0.6" level="project" />
+    <orderEntry type="library" exported="" name="jdom2-2.0.6" level="project" />
+    <orderEntry type="library" exported="" name="slf4j-api-1.7.25" level="project" />
+    <orderEntry type="library" exported="" name="xmlsec-2.1.1" level="project" />
   </component>
 </module>
