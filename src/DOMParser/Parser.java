@@ -1,12 +1,10 @@
 package DOMParser;
 
 import Model.User;
-import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.jdom2.JDOMException;
 
 import javax.xml.transform.TransformerException;
 import java.io.File;
-import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 public interface Parser {
@@ -25,4 +23,8 @@ public interface Parser {
     void update_user_element(int user_index, int property_index, String new_value);
 
     public List<User> getUserList();
+
+    void encrypt_doc() throws JDOMException;
+
+    void encrypt_element(int selected_node, int leaf_index) throws JDOMException;
 }

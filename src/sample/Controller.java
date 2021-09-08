@@ -51,6 +51,8 @@ public class Controller {
     String message = "";
     int selected_node = 0;
     public static Stage primary_stage;
+    int node_index = -1, leaf_index = -1;
+    boolean node_flag = false, element_flag = false, doc_flag = false;
 
     public void on_read_file_clicked(ActionEvent event) {
         final File file;
@@ -127,16 +129,34 @@ public class Controller {
         dom_tree.setOnEditCommit(this::editCommit);
 
         //Selection model for tree
+
         dom_tree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
             if ((TreeItem<String>) newValue != dom_tree.getRoot()) {
                 selected_node = dom_tree.getRoot().getChildren().indexOf((TreeItem<String>) newValue);
-                set_user(selected_node);
+                if (selected_node != -1) {
+                    set_user(selected_node);
+                    node_flag = true;
+                    element_flag = false;
+                    doc_flag = false;
+                } else {
+                    selected_node = dom_tree.getRoot().getChildren().indexOf(newValue.getParent());
+                    System.out.println("Node selected: " + selected_node);
+                    leaf_index = newValue.getParent().getChildren().indexOf(newValue);
+                    System.out.println("Leaf selected" + leaf_index);
+                    element_flag = true;
+                    node_flag = false;
+                    doc_flag = false;
+                }
+            } else {
+                doc_flag = true;
+                element_flag = false;
+                node_flag = false;
             }
         });
     }
 
+
     private void editCommit(EditEvent event) {
-        int node_index = -1, leaf_index = -1;
         if (event.getTreeItem() == dom_tree.getRoot() || event.getTreeItem() == null)
             return;
         if (!root.getChildren().contains(event.getTreeItem())) {
@@ -151,13 +171,16 @@ public class Controller {
                             flag = false;
                             node_index++;
                             message += "You have input a non numeric value in User-" + node_index + "\n";
-                        } else
+                        } else {
                             flag = true;
+
+                        }
                     break;
                 }
             }
             if (flag) {
                 parser.update_user_element(node_index, leaf_index, event.getNewValue() + "");
+                tree_changed = true;
             }
         }
     }
@@ -222,39 +245,44 @@ public class Controller {
             alert = new Alert(Alert.AlertType.ERROR);
             alert.initOwner(primary_stage.getOwner());
             alert.setContentText("There are errors in the dom tree please fix them:\n" + message);
+            Platform.runLater(alert::show);
         } else if (tree_changed) {
             alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setContentText("XML file saved successfully!");
             alert.initOwner(primary_stage.getOwner());
-            FileChooser.ExtensionFilter xml_files = new FileChooser.ExtensionFilter("XML3 files", "*.xml");
-            FileChooser save_as = new FileChooser();
-            String path = System.getProperty("user.dir");
-            save_as.setInitialDirectory(new File(path));
-            save_as.getExtensionFilters().addAll(xml_files);
-            String file_name = save_as.showSaveDialog(null).getName();
-            Thread th_process = new Thread(() -> {
-                try {
-                    process.process();
-                } catch (InterruptedException ex) {
-                    Alert error_alert = new Alert(Alert.AlertType.ERROR);
-                    error_alert.setContentText("Error!\n" + Arrays.toString(ex.getStackTrace()));
-                    error_alert.show();
-                }
-            });
+            try {
+                FileChooser.ExtensionFilter xml_files = new FileChooser.ExtensionFilter("XML3 files", "*.xml");
+                FileChooser save_as = new FileChooser();
+                String path = System.getProperty("user.dir");
+                save_as.setInitialDirectory(new File(path));
+                save_as.getExtensionFilters().addAll(xml_files);
+                String file_name = save_as.showSaveDialog(null).getName();
+                Thread th_process = new Thread(() -> {
+                    try {
+                        process.process();
+                    } catch (InterruptedException ex) {
+                        Alert error_alert = new Alert(Alert.AlertType.ERROR);
+                        error_alert.setContentText("Error!\n" + Arrays.toString(ex.getStackTrace()));
+                        Platform.runLater(error_alert::show);
+                    }
+                });
 
-            Thread th_save_thread = new Thread(() -> {
-                try {
-                    process.setParser(parser);
-                    process.save_file(file_name, parser);
-                    tree_changed = false;
-                    Platform.runLater(alert::show);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
-            th_process.start();
-            th_save_thread.start();
-
+                Thread th_save_thread = new Thread(() -> {
+                    try {
+                        process.setParser(parser);
+                        process.save_file(file_name, parser);
+                        tree_changed = false;
+                        Platform.runLater(alert::show);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                });
+                th_process.start();
+                th_save_thread.start();
+            } catch (Exception ex) {
+                //ex.printStackTrace();
+                System.out.println("save dialog Closed!");
+            }
         }
     }
 
@@ -289,13 +317,22 @@ public class Controller {
             if (res.isPresent()) {
                 if (res.get().equals(ButtonType.CANCEL))
                     t.consume();
+                else if (res.get().equals(ButtonType.YES))
+                    Platform.exit();
             }
+        } else {
+            Platform.exit();
         }
     }
 
     public void on_encrypt_clicked(ActionEvent event) {
         try {
-            parser.encrypt_node(selected_node);
+            if (doc_flag)
+                parser.encrypt_doc();
+            else if (node_flag)
+                parser.encrypt_node(selected_node);
+            else if (element_flag)
+                parser.encrypt_element(selected_node, leaf_index);
             tree_changed = true;
         } catch (Exception e) {
             e.printStackTrace();

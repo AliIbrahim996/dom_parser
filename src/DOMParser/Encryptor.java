@@ -11,24 +11,32 @@ import javax.crypto.SecretKey;
 import java.security.Key;
 
 public class Encryptor {
+
+    private static Key aesSymmetricKey = null;
+    private static Key deSedeEncryptKey = null;
+    private static EncryptedKey encryptedKey = null;
+    private static XMLCipher xmlCipher;
+
+    private static XMLCipher initializer() throws Exception {
+        aesSymmetricKey = generateDataEncryptionKey();
+        deSedeEncryptKey = generateKeyEncryptionKey();
+        String algorithmURI = XMLCipher.TRIPLEDES_KeyWrap;
+        XMLCipher keyCipher = XMLCipher.getInstance(algorithmURI);
+        keyCipher.init(XMLCipher.WRAP_MODE, deSedeEncryptKey);
+        return keyCipher;
+    }
+
     /**
      * @param d the document
      * @param e the element
      * @return the document after encrypting a node
-     * */
-    public static Document encrypt_element(Document d, org.w3c.dom.Element e){
+     */
+    public static Document encrypt_node(Document d, org.w3c.dom.Element e) {
         org.apache.xml.security.Init.init();
-        Key aesSymmetricKey = null;
-        Key deSedeEncryptKey = null;
-        EncryptedKey encryptedKey = null;
         try {
-            aesSymmetricKey = generateDataEncryptionKey();
-            deSedeEncryptKey = generateKeyEncryptionKey();
-            String algorithmURI = XMLCipher.TRIPLEDES_KeyWrap;
-            XMLCipher keyCipher = XMLCipher.getInstance(algorithmURI);
-            keyCipher.init(XMLCipher.WRAP_MODE, deSedeEncryptKey);
+            XMLCipher keyCipher = initializer();
             encryptedKey = keyCipher.encryptKey(d, aesSymmetricKey);
-            return encrypt_element(d, aesSymmetricKey, encryptedKey, e);
+            return encrypt_(d, encryptedKey, e);
 
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -36,21 +44,47 @@ public class Encryptor {
         return d;
     }
 
-    /**
-     * Encrypt xml node
-     *
-     * @param d               the document
-     * @param aesSymmetricKey the encrypt symmetric key
-     * @param encryptedKey    the encrypted key
-     * @param e               the element
-     * @return the document after encrypting a node
-     * @throws Exception the exception
-     */
-    private static Document encrypt_element(Document d, Key aesSymmetricKey, EncryptedKey encryptedKey, org.w3c.dom.Element e) throws Exception {
+    public static Document encrypt_document(Document d) {
+        org.apache.xml.security.Init.init();
+        try {
+            XMLCipher keyCipher = initializer();
+            encryptedKey = keyCipher.encryptKey(d, aesSymmetricKey);
+            return encrypt_(d, aesSymmetricKey, encryptedKey);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return d;
+    }
+
+    private static Document encrypt_(Document d, Key aesSymmetricKey, EncryptedKey encryptedKey) throws Exception {
         String algorithmURI = XMLCipher.AES_128;
         XMLCipher xmlCipher = XMLCipher.getInstance(algorithmURI);
         xmlCipher.init(XMLCipher.ENCRYPT_MODE, aesSymmetricKey);
         EncryptedData encryptedData = xmlCipher.getEncryptedData();
+        encryptedData.setMimeType("text/xml");
+        KeyInfo keyInfo = new KeyInfo(d);
+        keyInfo.add(encryptedKey);
+        encryptedData.setKeyInfo(keyInfo);
+        xmlCipher.doFinal(d, d);
+        return d;
+    }
+
+    /**
+     * Encrypt xml node
+     *
+     * @param d            the document
+     * @param encryptedKey the encrypted key
+     * @param e            the element
+     * @return the document after encrypting a node
+     * @throws Exception the exception
+     */
+    private static Document encrypt_(Document d, EncryptedKey encryptedKey, org.w3c.dom.Element e) throws Exception {
+        String algorithmURI = XMLCipher.AES_128;
+        xmlCipher = XMLCipher.getInstance(algorithmURI);
+        xmlCipher.init(XMLCipher.ENCRYPT_MODE, aesSymmetricKey);
+        EncryptedData encryptedData = xmlCipher.getEncryptedData();
+        System.out.println("Encrypted data type: " + encryptedData.getType());
         /*
          * Setting keyinfo inside the encrypted data being prepared.
          */

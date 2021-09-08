@@ -2,21 +2,20 @@ package DOMParser;
 
 import org.jdom2.Attribute;
 import org.jdom2.Element;
+import org.jdom2.JDOMException;
 import org.jdom2.Text;
 import org.jdom2.input.DOMBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-
 import org.w3c.dom.Document;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.File;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.SAXException;
@@ -36,6 +35,21 @@ public class DOMXmlParser implements Parser {
 
     public List<User> getUserList() {
         return userList;
+    }
+
+
+    private String getTagName(int leaf_index) {
+        switch (leaf_index) {
+            case 0:
+                return "firstName";
+            case 1:
+                return "lastName";
+            case 2:
+                return "gender";
+            case 3:
+                return "age";
+        }
+        return "";
     }
 
     public List<Element> getNodeList() {
@@ -140,9 +154,29 @@ public class DOMXmlParser implements Parser {
         Document d = DocumentConverter.convertJDOMToDOM(document);
         org.w3c.dom.Element e = (org.w3c.dom.Element) d.getElementsByTagName("User").item(index);
         //Encrypt element at specified index
-        d = Encryptor.encrypt_element(d, e);
+        d = Encryptor.encrypt_node(d, e);
         index++;
         Controller.show_alert("User node " + index + " has been encrypted successfully!");
+        document = DocumentConverter.convertDOMtoJDOM(d);
+    }
+
+
+    @Override
+    public void encrypt_doc() throws JDOMException {
+        Document d = DocumentConverter.convertJDOMToDOM(document);
+        d = Encryptor.encrypt_document(d);
+        Controller.show_alert("Document has been encrypted successfully!");
+        document = DocumentConverter.convertDOMtoJDOM(d);
+    }
+
+    @Override
+    public void encrypt_element(int selected_node, int leaf_index) throws JDOMException {
+        Document d = DocumentConverter.convertJDOMToDOM(document);
+        org.w3c.dom.Element user_node = (org.w3c.dom.Element) d.getElementsByTagName("User").item(selected_node);
+        org.w3c.dom.Element leaf_node = (org.w3c.dom.Element) user_node.getElementsByTagName(getTagName(leaf_index)).item(0);
+        d = Encryptor.encrypt_node(d, leaf_node);
+        selected_node++;
+        Controller.show_alert(getTagName(leaf_index) + " of user " + selected_node + " has been encrypted successfully!");
         document = DocumentConverter.convertDOMtoJDOM(d);
     }
 }
