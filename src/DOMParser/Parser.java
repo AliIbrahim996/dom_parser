@@ -1,10 +1,13 @@
 package DOMParser;
 
 import Model.User;
+import org.jdom2.Element;
 import org.jdom2.JDOMException;
+import org.w3c.dom.Node;
 
 import javax.xml.transform.TransformerException;
 import java.io.File;
+import java.util.Collection;
 import java.util.List;
 
 public interface Parser {
@@ -22,9 +25,21 @@ public interface Parser {
 
     void update_user_element(int user_index, int property_index, String new_value);
 
-    public List<User> getUserList();
+    List<User> getUserList();
 
     void encrypt_doc() throws JDOMException;
 
     void encrypt_element(int selected_node, int leaf_index) throws JDOMException;
+
+    int search(String first_name) throws JDOMException;
+
+    int next(String first_name);
+
+    int previous(String first_name);
+
+    int getName_index();
+
+    void get_first_name();
+
+    List<Element> getNodeList();
 }

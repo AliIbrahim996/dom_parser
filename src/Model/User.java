@@ -53,4 +53,21 @@ public class User {
         return "User [id=" + id + ", firstName=" + firstName + ", lastName=" + lastName + ", age=" + age + ", gender=" +
                 gender + "]";
     }
+
+    public void set_value(int leaf_index, Object newValue) {
+        switch (leaf_index) {
+            case 0:
+                setFirstName(newValue + "");
+                break;
+            case 1:
+                setLastName(newValue + "");
+                break;
+            case 2:
+                setGender(newValue + "");
+                break;
+            case 3:
+                setAge((int) newValue);
+                break;
+        }
+    }
 }

@@ -4,6 +4,7 @@ import org.jdom2.Attribute;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Text;
+import org.jdom2.filter.ElementFilter;
 import org.jdom2.input.DOMBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
@@ -15,6 +16,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -32,6 +34,7 @@ public class DOMXmlParser implements Parser {
     List<User> userList;
     List<Element> nodeList;
     org.jdom2.Document document;
+    int name_index = 0;
 
     public List<User> getUserList() {
         return userList;
@@ -51,6 +54,7 @@ public class DOMXmlParser implements Parser {
         }
         return "";
     }
+
 
     public List<Element> getNodeList() {
         return nodeList;
@@ -84,10 +88,21 @@ public class DOMXmlParser implements Parser {
                 for (User emp : userList) {
                     System.out.println(emp.toString());
                 }
+                get_first_name();
                 notify();
             } catch (SAXException | ParserConfigurationException | IOException e1) {
                 e1.printStackTrace();
             }
+        }
+    }
+
+    public void get_first_name() {
+        Element root = document.getRootElement();
+        ElementFilter nameFilter = new ElementFilter("firstName");
+        search_results = new ArrayList<>();
+        Iterator<Element> elementIterator = root.getDescendants(nameFilter);
+        while (elementIterator.hasNext()) {
+            search_results.add(elementIterator.next());
         }
     }
 
@@ -123,6 +138,9 @@ public class DOMXmlParser implements Parser {
         element.addContent(new Element("age").setText(String.valueOf(user.getAge())));
         element.addContent(new Element("gender").setText(user.getGender()));
         document.getRootElement().addContent(element);
+        nodeList = document.getRootElement().getChildren("User");
+        userList.add(user);
+        get_first_name();
     }
 
     @Override
@@ -178,5 +196,64 @@ public class DOMXmlParser implements Parser {
         selected_node++;
         Controller.show_alert(getTagName(leaf_index) + " of user " + selected_node + " has been encrypted successfully!");
         document = DocumentConverter.convertDOMtoJDOM(d);
+    }
+
+    List<Element> search_results;
+
+    @Override
+    public int search(String first_name) throws JDOMException {
+        Element element;
+        while (name_index < search_results.size()) {
+            element = search_results.get(name_index);
+            if (element.getValue().equals(first_name)) {
+                return name_index++;
+            }
+            name_index++;
+        }
+        ;
+        name_index = 0;
+        return -1;
+    }
+
+    @Override
+    public int next(String first_name) {
+        if (name_index < search_results.size()) {
+            int pre_index = name_index;
+            Element element;
+            while (name_index < search_results.size()) {
+                element = search_results.get(name_index);
+                if (element.getValue().equals(first_name)) {
+                    return name_index++;
+                }
+                name_index++;
+            }
+            ;
+            name_index = pre_index;
+        }
+        return -1;
+    }
+
+    @Override
+    public int previous(String first_name) {
+        if (name_index > 0) {
+            int pre_index = name_index;
+            Element element;
+            name_index--;
+            while (name_index-- > 0) {
+                element = search_results.get(name_index);
+                if (element.getValue().equals(first_name)) {
+                    return name_index;
+                }
+            }
+            name_index = pre_index;
+            return -1;
+        } else {
+            return -1;
+        }
+    }
+
+    @Override
+    public int getName_index() {
+        return name_index;
     }
 }

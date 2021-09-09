@@ -1,32 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Users>
-    <xenc:EncryptedData xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" Type="http://www.w3.org/2001/04/xmlenc#Element">
-        <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc"/>
-        <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
-            <xenc:EncryptedKey>
-                <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#kw-tripledes"/>
-                <xenc:CipherData>
-                    <xenc:CipherValue>UP4ZSgr7apwEVbFwWQmJGfGJksMp1ozK7qXnddEh0/I=</xenc:CipherValue>
-                </xenc:CipherData>
-            </xenc:EncryptedKey>
-        </ds:KeyInfo>
-        <xenc:CipherData>
-            <xenc:CipherValue>GpNIzrtjmgFXGSSjboXXsAw4fjYLkXRKypGSwwei0mUW7M8yyXDDB++gv7TAFzdtFAxvnRLYZAC6&#xD;
-                WZIzR2nUb/n/MiC+Uq3lbHT08cAnapsoAUcobcSVY24YLpF21R2XQX71kfCVQ9T6aPTTnSfJEw9H&#xD;
-                S7EFaQOVUwXgvhNhxxzryi1rW5tWLgnhcqyNLINr5k0mkN5ysbawRmQKu4x0CA==
-            </xenc:CipherValue>
-        </xenc:CipherData>
-    </xenc:EncryptedData>
-    <User id="2">
-        <firstName>Leen</firstName>
-        <lastName>Mualla</lastName>
-        <age>25</age>
-        <gender>Female</gender>
-    </User>
-    <User id="3">
-        <firstName>aa</firstName>
-        <lastName>aa</lastName>
-        <age>23</age>
-        <gender>Male</gender>
-    </User>
+  <User id="1">
+    <firstName>Ali</firstName>
+    <lastName>Ibrahim</lastName>
+    <age>25</age>
+    <gender>Male</gender>
+  </User>
+  <User id="2">
+    <firstName>Leen</firstName>
+    <lastName>Mualla</lastName>
+    <age>25</age>
+    <gender>Female</gender>
+  </User>
+  <User id="3">
+    <firstName>Ali</firstName>
+    <lastName>aa</lastName>
+    <age>23</age>
+    <gender>Male</gender>
+  </User>
 </Users>

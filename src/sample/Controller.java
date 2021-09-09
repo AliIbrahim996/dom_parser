@@ -14,6 +14,9 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.w3c.dom.Node;
 
 import javax.swing.*;
 import java.io.File;
@@ -39,6 +42,10 @@ public class Controller {
     public Button encrypt = new Button();
     public Button delete = new Button();
     public static Pane root_pane = new Pane();
+    public TextField search_text_field = new TextField();
+    public Button search_btn = new Button();
+    public Button next = new Button();
+    public Button previous = new Button();
     TreeItem<String> root;
     Parser parser = new DOMXmlParser(this);
     Process process = new Process(this);
@@ -119,6 +126,8 @@ public class Controller {
         update.disableProperty().setValue(false);
         delete.disableProperty().setValue(false);
         encrypt.disableProperty().setValue(false);
+        search_btn.disableProperty().setValue(false);
+        search_text_field.disableProperty().setValue(false);
         first_name_.editableProperty().setValue(true);
         lase_name_.editableProperty().setValue(true);
         age_.editableProperty().setValue(true);
@@ -137,7 +146,6 @@ public class Controller {
                     set_user(selected_node);
                     node_flag = true;
                     element_flag = false;
-                    doc_flag = false;
                 } else {
                     selected_node = dom_tree.getRoot().getChildren().indexOf(newValue.getParent());
                     System.out.println("Node selected: " + selected_node);
@@ -145,8 +153,8 @@ public class Controller {
                     System.out.println("Leaf selected" + leaf_index);
                     element_flag = true;
                     node_flag = false;
-                    doc_flag = false;
                 }
+                doc_flag = false;
             } else {
                 doc_flag = true;
                 element_flag = false;
@@ -180,7 +188,10 @@ public class Controller {
             }
             if (flag) {
                 parser.update_user_element(node_index, leaf_index, event.getNewValue() + "");
+                users.get(node_index).set_value(leaf_index, event.getNewValue());
+                set_user(node_index);
                 tree_changed = true;
+                parser.get_first_name();
             }
         }
     }
@@ -213,6 +224,7 @@ public class Controller {
             TreeItem<String> user_item = get_user_item(user);
             dom_tree.getRoot().getChildren().add(user_item);
             parser.create_user_element(user);
+            users.add(user);
             tree_changed = true;
             clearFields();
         }
@@ -283,6 +295,8 @@ public class Controller {
                 //ex.printStackTrace();
                 System.out.println("save dialog Closed!");
             }
+        } else {
+            show_alert("you haven't made any changes to the document!");
         }
     }
 
@@ -317,7 +331,7 @@ public class Controller {
             if (res.isPresent()) {
                 if (res.get().equals(ButtonType.CANCEL))
                     t.consume();
-                else if (res.get().equals(ButtonType.YES))
+                else if (res.get().equals(ButtonType.YES) || res.get().equals(ButtonType.CLOSE))
                     Platform.exit();
             }
         } else {
@@ -336,6 +350,69 @@ public class Controller {
             tree_changed = true;
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void on_search_btn_clicked(ActionEvent event) throws JDOMException {
+        assert !search_text_field.getText().equals("");
+        int index = parser.search(search_text_field.getText());
+        if (index != -1) {
+            select_node(index);
+            next.disableProperty().setValue(false);
+            previous.disableProperty().setValue(false);
+        } else {
+            show_alert("No such user found");
+        }
+    }
+
+    private void select_node(int index) {
+        int i = 0;
+        root = dom_tree.getRoot();
+        for (TreeItem<String> treeItem : root.getChildren()) {
+            if (dom_tree.getRoot().getChildren().indexOf(treeItem) == index) {
+                dom_tree.getRoot().setExpanded(true);
+                dom_tree.getRoot().getChildren().get(index).setExpanded(true);
+                set_user(index);
+            }
+        }
+    }
+
+    public void next(ActionEvent actionEvent) {
+        if (parser.getName_index() < parser.getNodeList().size()) {
+            assert !search_text_field.getText().equals("");
+            int index = parser.next(search_text_field.getText());
+            if (index != -1) {
+                select_node(index);
+                next.disableProperty().setValue(false);
+                previous.disableProperty().setValue(false);
+            } else {
+                show_alert("No next user found");
+                next.disableProperty().setValue(true);
+                previous.disableProperty().setValue(false);
+            }
+        } else {
+            show_alert("No next user found");
+            next.disableProperty().setValue(true);
+            previous.disableProperty().setValue(false);
+        }
+    }
+
+    public void previous(ActionEvent actionEvent) {
+        if (parser.getName_index() > 0) {
+            assert !search_text_field.getText().equals("");
+            int index = parser.previous(search_text_field.getText());
+            if (index != -1) {
+                select_node(index);
+                previous.disableProperty().setValue(false);
+            } else {
+                show_alert("No previous user found");
+                next.disableProperty().setValue(false);
+                previous.disableProperty().setValue(true);
+            }
+        } else {
+            show_alert("No previous user found");
+            next.disableProperty().setValue(false);
+            previous.disableProperty().setValue(true);
         }
     }
 }
