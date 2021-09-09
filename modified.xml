@@ -18,4 +18,25 @@
     <age>23</age>
     <gender>Male</gender>
   </User>
+  <User id="4">
+    <firstName>Ali</firstName>
+    <lastName>hasan</lastName>
+    <age>28</age>
+    <gender>
+      <xenc:EncryptedData xmlns:xenc="http://www.w3.org/2001/04/xmlenc#" Type="http://www.w3.org/2001/04/xmlenc#Content">
+        <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#aes128-cbc" />
+        <ds:KeyInfo xmlns:ds="http://www.w3.org/2000/09/xmldsig#">
+          <xenc:EncryptedKey>
+            <xenc:EncryptionMethod Algorithm="http://www.w3.org/2001/04/xmlenc#kw-tripledes" />
+            <xenc:CipherData>
+              <xenc:CipherValue>3YmbYuHoucyfy19hIblLVA3w9Ai3V2Rk/se66ZmIRbo=</xenc:CipherValue>
+            </xenc:CipherData>
+          </xenc:EncryptedKey>
+        </ds:KeyInfo>
+        <xenc:CipherData>
+          <xenc:CipherValue>t+ku7fvhsu1x4G6iUrHSsNGO1VAgRy7KI/RQcwv4xHk=</xenc:CipherValue>
+        </xenc:CipherData>
+      </xenc:EncryptedData>
+    </gender>
+  </User>
 </Users>

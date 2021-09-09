@@ -14,9 +14,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import org.jdom2.Element;
 import org.jdom2.JDOMException;
-import org.w3c.dom.Node;
 
 import javax.swing.*;
 import java.io.File;
@@ -47,7 +45,7 @@ public class Controller {
     public Button next = new Button();
     public Button previous = new Button();
     TreeItem<String> root;
-    Parser parser = new DOMXmlParser(this);
+    Parser parser = new DOMXmlParser();
     Process process = new Process(this);
     List<User> users = new ArrayList<>();
 
@@ -93,9 +91,7 @@ public class Controller {
                     root.getChildren().add(user_item);
                     strings.add("user " + user.getId());
                 }
-                Platform.runLater(() -> {
-                    dom_tree.setRoot(root);
-                });
+                Platform.runLater(() -> dom_tree.setRoot(root));
                 elements.setItems(FXCollections.observableArrayList(strings));
                 strings = new ArrayList<>();
                 strings.add("");
@@ -140,17 +136,15 @@ public class Controller {
         //Selection model for tree
 
         dom_tree.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
-            if ((TreeItem<String>) newValue != dom_tree.getRoot()) {
-                selected_node = dom_tree.getRoot().getChildren().indexOf((TreeItem<String>) newValue);
+            if (newValue != dom_tree.getRoot()) {
+                selected_node = dom_tree.getRoot().getChildren().indexOf(newValue);
                 if (selected_node != -1) {
                     set_user(selected_node);
                     node_flag = true;
                     element_flag = false;
                 } else {
                     selected_node = dom_tree.getRoot().getChildren().indexOf(newValue.getParent());
-                    System.out.println("Node selected: " + selected_node);
                     leaf_index = newValue.getParent().getChildren().indexOf(newValue);
-                    System.out.println("Leaf selected" + leaf_index);
                     element_flag = true;
                     node_flag = false;
                 }
@@ -174,8 +168,6 @@ public class Controller {
                     leaf_index = item.getChildren().indexOf(event.getTreeItem());
                     if (leaf_index == 3)
                         if (!event.getNewValue().toString().matches("[0-9]+")) {
-                            System.out.println(dom_tree.getRoot().getChildren().get(node_index).
-                                    getChildren().get(leaf_index).getValue());
                             flag = false;
                             node_index++;
                             message += "You have input a non numeric value in User-" + node_index + "\n";
@@ -197,7 +189,6 @@ public class Controller {
     }
 
     private void editStart(TreeView.EditEvent event) {
-        System.out.println("Start editing " + event.getTreeItem());
         root = dom_tree.getRoot();
 
     }
@@ -292,8 +283,7 @@ public class Controller {
                 th_process.start();
                 th_save_thread.start();
             } catch (Exception ex) {
-                //ex.printStackTrace();
-                System.out.println("save dialog Closed!");
+                ex.printStackTrace();
             }
         } else {
             show_alert("you haven't made any changes to the document!");
@@ -311,7 +301,7 @@ public class Controller {
         first_name_.setText(user.getFirstName());
         lase_name_.setText(user.getLastName());
         age_.setText(user.getAge() + "");
-        gender_.getSelectionModel().select(user.getGender().toLowerCase().equals("male") ? 1 : 2);
+        gender_.getSelectionModel().select(user.getGender().equalsIgnoreCase("male") ? 1 : 2);
     }
 
     public static void set_primary_stage(Stage stage) {
@@ -325,17 +315,17 @@ public class Controller {
             alert.getButtonTypes().add(ButtonType.CANCEL);
             alert.getButtonTypes().add(ButtonType.YES);
             alert.setTitle("Quit application");
-            alert.setContentText(String.format("Close without saving?"));
+            alert.setContentText("Close without saving?");
             alert.initOwner(primary_stage.getOwner());
             Optional<ButtonType> res = alert.showAndWait();
             if (res.isPresent()) {
                 if (res.get().equals(ButtonType.CANCEL))
                     t.consume();
                 else if (res.get().equals(ButtonType.YES) || res.get().equals(ButtonType.CLOSE))
-                    Platform.exit();
+                    primary_stage.close();
             }
         } else {
-            Platform.exit();
+            primary_stage.close();
         }
     }
 
@@ -353,7 +343,7 @@ public class Controller {
         }
     }
 
-    public void on_search_btn_clicked(ActionEvent event) throws JDOMException {
+    public void on_search_btn_clicked(ActionEvent event) {
         assert !search_text_field.getText().equals("");
         int index = parser.search(search_text_field.getText());
         if (index != -1) {
@@ -366,7 +356,6 @@ public class Controller {
     }
 
     private void select_node(int index) {
-        int i = 0;
         root = dom_tree.getRoot();
         for (TreeItem<String> treeItem : root.getChildren()) {
             if (dom_tree.getRoot().getChildren().indexOf(treeItem) == index) {
@@ -384,12 +373,11 @@ public class Controller {
             if (index != -1) {
                 select_node(index);
                 next.disableProperty().setValue(false);
-                previous.disableProperty().setValue(false);
             } else {
                 show_alert("No next user found");
                 next.disableProperty().setValue(true);
-                previous.disableProperty().setValue(false);
             }
+            previous.disableProperty().setValue(false);
         } else {
             show_alert("No next user found");
             next.disableProperty().setValue(true);

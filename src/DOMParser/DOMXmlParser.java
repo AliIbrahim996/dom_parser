@@ -25,21 +25,18 @@ import Model.User;
 import sample.Controller;
 
 public class DOMXmlParser implements Parser {
-    private Controller controller;
 
-    public DOMXmlParser(Controller controller) {
-        this.controller = controller;
-    }
-
+    /*fields*/
     List<User> userList;
     List<Element> nodeList;
     org.jdom2.Document document;
     int name_index = 0;
+    List<Element> search_results;
 
+    /*Methods*/
     public List<User> getUserList() {
         return userList;
     }
-
 
     private String getTagName(int leaf_index) {
         switch (leaf_index) {
@@ -55,13 +52,8 @@ public class DOMXmlParser implements Parser {
         return "";
     }
 
-
     public List<Element> getNodeList() {
         return nodeList;
-    }
-
-    public org.jdom2.Document getDoc() {
-        return document;
     }
 
     @Override
@@ -78,15 +70,11 @@ public class DOMXmlParser implements Parser {
             try {
                 d_builder = db_factory.newDocumentBuilder();
                 Document doc = d_builder.parse(xml_file);
-                System.out.println("Root element :" + doc.getDocumentElement().getNodeName());
                 document = new DOMBuilder().build(doc);
                 nodeList = document.getRootElement().getChildren("User");
                 userList = new ArrayList();
                 for (Element element : nodeList) {
                     userList.add(getUser(element));
-                }
-                for (User emp : userList) {
-                    System.out.println(emp.toString());
                 }
                 get_first_name();
                 notify();
@@ -123,7 +111,6 @@ public class DOMXmlParser implements Parser {
             FileOutputStream fileOutputStream = new FileOutputStream(file);
             xmlOutputter.setFormat(Format.getPrettyFormat());
             xmlOutputter.output(document, fileOutputStream);
-            System.out.println("XML file updated successfully");
         } catch (Exception ignored) {
 
         }
@@ -178,7 +165,6 @@ public class DOMXmlParser implements Parser {
         document = DocumentConverter.convertDOMtoJDOM(d);
     }
 
-
     @Override
     public void encrypt_doc() throws JDOMException {
         Document d = DocumentConverter.convertJDOMToDOM(document);
@@ -198,10 +184,9 @@ public class DOMXmlParser implements Parser {
         document = DocumentConverter.convertDOMtoJDOM(d);
     }
 
-    List<Element> search_results;
 
     @Override
-    public int search(String first_name) throws JDOMException {
+    public int search(String first_name) {
         Element element;
         while (name_index < search_results.size()) {
             element = search_results.get(name_index);
@@ -210,7 +195,6 @@ public class DOMXmlParser implements Parser {
             }
             name_index++;
         }
-        ;
         name_index = 0;
         return -1;
     }
@@ -227,7 +211,6 @@ public class DOMXmlParser implements Parser {
                 }
                 name_index++;
             }
-            ;
             name_index = pre_index;
         }
         return -1;
@@ -246,10 +229,8 @@ public class DOMXmlParser implements Parser {
                 }
             }
             name_index = pre_index;
-            return -1;
-        } else {
-            return -1;
         }
+        return -1;
     }
 
     @Override
