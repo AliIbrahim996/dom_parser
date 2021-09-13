@@ -1,6 +1,6 @@
 package sample;
 
-import DOMParser.DOMXmlParser;
+import DOMParser.UserParser;
 import DOMParser.Parser;
 import Model.User;
 import javafx.application.Platform;
@@ -14,7 +14,6 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
-import org.jdom2.JDOMException;
 
 import javax.swing.*;
 import java.io.File;
@@ -45,9 +44,9 @@ public class Controller {
     public Button next = new Button();
     public Button previous = new Button();
     TreeItem<String> root;
-    Parser parser = new DOMXmlParser();
+    Parser parser = new UserParser();
     Process process = new Process(this);
-    List<User> users = new ArrayList<>();
+    List<Object> users = new ArrayList<>();
 
     private static int id = 0;
     private static boolean tree_changed = false;
@@ -85,14 +84,15 @@ public class Controller {
         Thread th2 = new Thread(() -> {
             try {
                 parser.parse(file);
-                users = parser.getUserList();
+                users = parser.get_Object_List();
                 root = new TreeItem<>("Users");
                 List<String> strings = new ArrayList<>();
-                for (User user : users) {
-                    TreeItem<String> user_item = get_user_item(user);
-                    id = user.getId();
+                for (Object user : users) {
+
+                    TreeItem<String> user_item = get_user_item((User) user);
+                    id = ((User) user).getId();
                     root.getChildren().add(user_item);
-                    strings.add("user " + user.getId());
+                    strings.add("user " + ((User) user).getId());
                 }
                 Platform.runLater(() -> dom_tree.setRoot(root));
                 elements.setItems(FXCollections.observableArrayList(strings));
@@ -190,11 +190,11 @@ public class Controller {
                 }
             }
             if (flag) {
-                parser.update_user_element(node_index, leaf_index, event.getNewValue() + "");
-                users.get(node_index).set_value(leaf_index, event.getNewValue());
+                parser.update_element(node_index, leaf_index, event.getNewValue() + "");
+                ((User) users.get(node_index)).set_value(leaf_index, event.getNewValue());
                 set_user(node_index);
                 tree_changed = true;
-                parser.get_first_name();
+                parser.get_element();
             }
         }
     }
@@ -235,7 +235,7 @@ public class Controller {
             user.setGender(gender_.valueProperty().get());
             TreeItem<String> user_item = get_user_item(user);
             dom_tree.getRoot().getChildren().add(user_item);
-            parser.create_user_element(user);
+            parser.create_element(user);
             users.add(user);
             tree_changed = true;
             clearFields();
@@ -247,7 +247,7 @@ public class Controller {
      * @param event
      */
     public void on_delete_clicked(ActionEvent event) {
-        parser.delete_user_element(selected_node);
+        parser.delete_element(selected_node);
         dom_tree.getRoot().getChildren().remove(selected_node);
         dom_tree.getSelectionModel().select(0);
         tree_changed = true;
@@ -335,7 +335,7 @@ public class Controller {
      * @param index
      */
     private void set_user(int index) {
-        User user = users.get(index);
+        User user = (User) users.get(index);
         first_name_.setText(user.getFirstName());
         lase_name_.setText(user.getLastName());
         age_.setText(user.getAge() + "");
@@ -365,11 +365,14 @@ public class Controller {
             if (res.isPresent()) {
                 if (res.get().equals(ButtonType.CANCEL))
                     t.consume();
-                else if (res.get().equals(ButtonType.YES) || res.get().equals(ButtonType.CLOSE))
-                    primary_stage.close();
+                else if (res.get().equals(ButtonType.YES)) {
+                    Platform.exit();
+                    System.exit(0);
+                }
             }
-        } else {
-            primary_stage.close();
+        }else {
+            Platform.exit();
+            System.exit(0);
         }
     }
 
@@ -423,7 +426,7 @@ public class Controller {
      * @param actionEvent
      */
     public void next(ActionEvent actionEvent) {
-        if (parser.getName_index() < parser.getNodeList().size()) {
+        if (parser.get_index() < parser.getNodeList().size()) {
             assert !search_text_field.getText().equals("");
             int index = parser.next(search_text_field.getText());
             if (index != -1) {
@@ -445,7 +448,7 @@ public class Controller {
      * @param actionEvent
      */
     public void previous(ActionEvent actionEvent) {
-        if (parser.getName_index() > 0) {
+        if (parser.get_index() > 0) {
             assert !search_text_field.getText().equals("");
             int index = parser.previous(search_text_field.getText());
             if (index != -1) {

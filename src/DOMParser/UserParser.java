@@ -24,17 +24,17 @@ import org.xml.sax.SAXException;
 import Model.User;
 import sample.Controller;
 
-public class DOMXmlParser implements Parser {
+public class UserParser implements Parser {
 
     /*fields*/
-    List<User> userList;
+    List<Object> userList;
     List<Element> nodeList;
     org.jdom2.Document document;
     int name_index = 0;
     List<Element> search_results;
 
     /*Methods*/
-    public List<User> getUserList() {
+    public List<Object> get_Object_List() {
         return userList;
     }
 
@@ -57,7 +57,7 @@ public class DOMXmlParser implements Parser {
     }
 
     @Override
-    public void delete_user_element(int index) {
+    public void delete_element(int index) {
         document.getRootElement().getChildren("User").remove(index);
     }
 
@@ -76,7 +76,7 @@ public class DOMXmlParser implements Parser {
                 for (Element element : nodeList) {
                     userList.add(getUser(element));
                 }
-                get_first_name();
+                get_element();
                 notify();
             } catch (SAXException | ParserConfigurationException | IOException e1) {
                 e1.printStackTrace();
@@ -84,7 +84,7 @@ public class DOMXmlParser implements Parser {
         }
     }
 
-    public void get_first_name() {
+    public void get_element() {
         Element root = document.getRootElement();
         ElementFilter nameFilter = new ElementFilter("firstName");
         search_results = new ArrayList<>();
@@ -117,7 +117,8 @@ public class DOMXmlParser implements Parser {
     }
 
     @Override
-    public void create_user_element(User user) {
+    public void create_element(java.lang.Object object) {
+        User user = (User) object;
         Element element = new Element("User");
         element.setAttribute(new Attribute("id", user.getId() + ""));
         element.addContent(new Element("firstName").setText(user.getFirstName()));
@@ -127,15 +128,15 @@ public class DOMXmlParser implements Parser {
         document.getRootElement().addContent(element);
         nodeList = document.getRootElement().getChildren("User");
         userList.add(user);
-        get_first_name();
+        get_element();
     }
 
     @Override
-    public void update_user_element(int user_index, int property_index, String new_value) {
+    public void update_element(int _index, int property_index, String new_value) {
         String property = get_selected_property(property_index);
         if (property != null)
             document.getRootElement().getChildren("User").
-                    get(user_index).getChildren(property)
+                    get(_index).getChildren(property)
                     .get(0).setContent(new Text(new_value));
     }
 
@@ -186,11 +187,11 @@ public class DOMXmlParser implements Parser {
 
 
     @Override
-    public int search(String first_name) {
+    public int search(String element_value) {
         Element element;
         while (name_index < search_results.size()) {
             element = search_results.get(name_index);
-            if (element.getValue().equals(first_name)) {
+            if (element.getValue().equals(element_value)) {
                 return name_index++;
             }
             name_index++;
@@ -200,13 +201,13 @@ public class DOMXmlParser implements Parser {
     }
 
     @Override
-    public int next(String first_name) {
+    public int next(String element_value) {
         if (name_index < search_results.size()) {
             int pre_index = name_index;
             Element element;
             while (name_index < search_results.size()) {
                 element = search_results.get(name_index);
-                if (element.getValue().equals(first_name)) {
+                if (element.getValue().equals(element_value)) {
                     return name_index++;
                 }
                 name_index++;
@@ -217,14 +218,14 @@ public class DOMXmlParser implements Parser {
     }
 
     @Override
-    public int previous(String first_name) {
+    public int previous(String element_value) {
         if (name_index > 0) {
             int pre_index = name_index;
             Element element;
             name_index--;
             while (name_index-- > 0) {
                 element = search_results.get(name_index);
-                if (element.getValue().equals(first_name)) {
+                if (element.getValue().equals(element_value)) {
                     return name_index;
                 }
             }
@@ -234,7 +235,7 @@ public class DOMXmlParser implements Parser {
     }
 
     @Override
-    public int getName_index() {
+    public int get_index() {
         return name_index;
     }
 }

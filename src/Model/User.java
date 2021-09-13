@@ -57,8 +57,8 @@ public class User {
     }
 
     /**
-     * @param leaf_index
-     * @param newValue
+     * @param leaf_index the index of the leaf node
+     * @param newValue   the new value of the leaf
      */
     public void set_value(int leaf_index, Object newValue) {
         switch (leaf_index) {

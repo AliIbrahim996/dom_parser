@@ -26,18 +26,18 @@ public interface Parser {
     void write_xml_file(File file) throws TransformerException;
 
     /**
-     * method to append document with a new user
+     * method to append document with a new Object
      *
-     * @param user instance
+     * @param object instance
      */
-    void create_user_element(User user);
+    void create_element(java.lang.Object object);
 
     /**
-     * method to delete user from the document accordion to an index
+     * method to delete Object  from the document accordion to an index
      *
-     * @param index of the user
+     * @param index of the Object
      */
-    void delete_user_element(int index);
+    void delete_element(int index);
 
     /**
      * @param index
@@ -46,19 +46,19 @@ public interface Parser {
     void encrypt_node(int index) throws Exception;
 
     /**
-     * @param user_index
+     * @param _index
      * @param property_index
      * @param new_value
      */
-    void update_user_element(int user_index, int property_index, String new_value);
-    List<User> getUserList();
+    void update_element(int _index, int property_index, String new_value);
+    List<Object> get_Object_List();
     void encrypt_doc() throws JDOMException;
     void encrypt_element(int selected_node, int leaf_index) throws JDOMException;
-    int search(String first_name);
-    int next(String first_name);
-    int previous(String first_name);
-    int getName_index();
-    void get_first_name();
+    int search(String element_value);
+    int next(String element_value);
+    int previous(String element_value);
+    int get_index();
+    void get_element();
 
     List<Element> getNodeList();
 }
