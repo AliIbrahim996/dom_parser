@@ -59,6 +59,9 @@ public class Controller {
     int node_index = -1, leaf_index = -1;
     boolean node_flag = false, element_flag = false, doc_flag = false;
 
+    /**
+     * @param event
+     */
     public void on_read_file_clicked(ActionEvent event) {
         final File file;
         String path = System.getProperty("user.dir");
@@ -108,6 +111,9 @@ public class Controller {
         th2.start();
     }
 
+    /**
+     * @param text
+     */
     public static void show_alert(String text) {
         Alert alert;
         alert = new Alert(Alert.AlertType.INFORMATION);
@@ -116,6 +122,9 @@ public class Controller {
         Platform.runLater(alert::show);
     }
 
+    /**
+     *
+     */
     private void enable() {
         add.disableProperty().setValue(false);
         save.disableProperty().setValue(false);
@@ -157,7 +166,9 @@ public class Controller {
         });
     }
 
-
+    /**
+     * @param event
+     */
     private void editCommit(EditEvent event) {
         if (event.getTreeItem() == dom_tree.getRoot() || event.getTreeItem() == null)
             return;
@@ -188,11 +199,18 @@ public class Controller {
         }
     }
 
+    /**
+     * @param event
+     */
     private void editStart(TreeView.EditEvent event) {
         root = dom_tree.getRoot();
 
     }
 
+    /**
+     * @param user
+     * @return
+     */
     private TreeItem<String> get_user_item(User user) {
         TreeItem<String> user_item = new TreeItem<>("user " + user.getId());
         TreeItem<String> first_name = new TreeItem<>(user.getFirstName());
@@ -203,6 +221,9 @@ public class Controller {
         return user_item;
     }
 
+    /**
+     * @param event
+     */
     public void on_add_clicked(ActionEvent event) {
 
         if (validate()) {
@@ -222,7 +243,9 @@ public class Controller {
 
     }
 
-
+    /**
+     * @param event
+     */
     public void on_delete_clicked(ActionEvent event) {
         parser.delete_user_element(selected_node);
         dom_tree.getRoot().getChildren().remove(selected_node);
@@ -230,6 +253,9 @@ public class Controller {
         tree_changed = true;
     }
 
+    /**
+     *
+     */
     private void clearFields() {
         first_name_.clear();
         lase_name_.clear();
@@ -237,11 +263,17 @@ public class Controller {
         gender_.getSelectionModel().select(0);
     }
 
+    /**
+     * @return
+     */
     private boolean validate() {
         return !first_name_.getText().equals("") && !lase_name_.getText().equals("")
                 && !gender_.valueProperty().get().equals("") && !age_.getText().equals("");
     }
 
+    /**
+     * @param event
+     */
     public void on_save_clicked(ActionEvent event) {
         Alert alert;
         if (!flag) {
@@ -290,12 +322,18 @@ public class Controller {
         }
     }
 
+    /**
+     * @param event
+     */
     public void on_element_selected(ActionEvent event) {
         int index = elements.getSelectionModel().getSelectedIndex();
         set_user(index);
 
     }
 
+    /**
+     * @param index
+     */
     private void set_user(int index) {
         User user = users.get(index);
         first_name_.setText(user.getFirstName());
@@ -304,10 +342,16 @@ public class Controller {
         gender_.getSelectionModel().select(user.getGender().equalsIgnoreCase("male") ? 1 : 2);
     }
 
+    /**
+     * @param stage
+     */
     public static void set_primary_stage(Stage stage) {
         primary_stage = stage;
     }
 
+    /**
+     * @param t
+     */
     public static void close_window_event(WindowEvent t) {
         if (tree_changed) {
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
@@ -329,6 +373,9 @@ public class Controller {
         }
     }
 
+    /**
+     * @param event
+     */
     public void on_encrypt_clicked(ActionEvent event) {
         try {
             if (doc_flag)
@@ -343,6 +390,9 @@ public class Controller {
         }
     }
 
+    /**
+     * @param event
+     */
     public void on_search_btn_clicked(ActionEvent event) {
         assert !search_text_field.getText().equals("");
         int index = parser.search(search_text_field.getText());
@@ -355,6 +405,9 @@ public class Controller {
         }
     }
 
+    /**
+     * @param index
+     */
     private void select_node(int index) {
         root = dom_tree.getRoot();
         for (TreeItem<String> treeItem : root.getChildren()) {
@@ -366,6 +419,9 @@ public class Controller {
         }
     }
 
+    /**
+     * @param actionEvent
+     */
     public void next(ActionEvent actionEvent) {
         if (parser.getName_index() < parser.getNodeList().size()) {
             assert !search_text_field.getText().equals("");
@@ -385,6 +441,9 @@ public class Controller {
         }
     }
 
+    /**
+     * @param actionEvent
+     */
     public void previous(ActionEvent actionEvent) {
         if (parser.getName_index() > 0) {
             assert !search_text_field.getText().equals("");

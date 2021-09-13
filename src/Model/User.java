@@ -2,12 +2,14 @@ package Model;
 
 public class User {
 
+    /*properties*/
     private int id;
     private String firstName;
     private String lastName;
     private int age;
     private String gender;
 
+    /*getters and setters*/
     public int getId() {
         return id;
     }
@@ -54,6 +56,10 @@ public class User {
                 gender + "]";
     }
 
+    /**
+     * @param leaf_index
+     * @param newValue
+     */
     public void set_value(int leaf_index, Object newValue) {
         switch (leaf_index) {
             case 0:
