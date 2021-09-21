@@ -33,7 +33,7 @@ public class Controller {
     public Label age_label = new Label();
     public Label gender_label = new Label();
     public TextField first_name_ = new TextField();
-    public TextField lase_name_ = new TextField();
+    public TextField last_name_ = new TextField();
     public TextField age_ = new TextField();
     public TreeView<String> dom_tree = new TreeView<>();
     public Button encrypt = new Button();
@@ -134,7 +134,7 @@ public class Controller {
         search_btn.disableProperty().setValue(false);
         search_text_field.disableProperty().setValue(false);
         first_name_.editableProperty().setValue(true);
-        lase_name_.editableProperty().setValue(true);
+        last_name_.editableProperty().setValue(true);
         age_.editableProperty().setValue(true);
         dom_tree.setEditable(true);
         dom_tree.setCellFactory(TextFieldTreeCell.forTreeView());
@@ -229,7 +229,7 @@ public class Controller {
         if (validate()) {
             User user = new User();
             user.setFirstName(first_name_.getText());
-            user.setLastName(lase_name_.getText());
+            user.setLastName(last_name_.getText());
             user.setAge(Integer.parseInt(age_.getText()));
             user.setId(++id);
             user.setGender(gender_.valueProperty().get());
@@ -258,7 +258,7 @@ public class Controller {
      */
     private void clearFields() {
         first_name_.clear();
-        lase_name_.clear();
+        last_name_.clear();
         age_.clear();
         gender_.getSelectionModel().select(0);
     }
@@ -267,7 +267,7 @@ public class Controller {
      * @return
      */
     private boolean validate() {
-        return !first_name_.getText().equals("") && !lase_name_.getText().equals("")
+        return !first_name_.getText().equals("") && !last_name_.getText().equals("")
                 && !gender_.valueProperty().get().equals("") && !age_.getText().equals("");
     }
 
@@ -337,7 +337,7 @@ public class Controller {
     private void set_user(int index) {
         User user = (User) users.get(index);
         first_name_.setText(user.getFirstName());
-        lase_name_.setText(user.getLastName());
+        last_name_.setText(user.getLastName());
         age_.setText(user.getAge() + "");
         gender_.getSelectionModel().select(user.getGender().equalsIgnoreCase("male") ? 1 : 2);
     }

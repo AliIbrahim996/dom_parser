@@ -56,7 +56,7 @@
             <Font name="Century" size="16.0"/>
         </font>
     </Label>
-    <TextField fx:id="lase_name_" editable="false" layoutX="444.0" layoutY="267.0"/>
+    <TextField fx:id="last_name_" editable="false" layoutX="444.0" layoutY="267.0"/>
     <TextField fx:id="age_" editable="false" layoutX="143.0" layoutY="321.0" prefHeight="25.0" prefWidth="65.0"/>
     <Label fx:id="age_label" layoutX="64.0" layoutY="323.0" text="Age">
         <font>
