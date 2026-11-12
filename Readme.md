@@ -128,5 +128,5 @@ Released under the [MIT License](LICENSE).
 
 ## Contact
 
-#### [Ali Ibrahim](mailto:ali.ibrahi.2@lit-co.net)
+#### [Ali Ibrahim](mailto:eng.aliibrahim.96@outlook.com)
 #### [LinkedIn](https://www.linkedin.com/in/ali-ibrahim-b978b4181/)
