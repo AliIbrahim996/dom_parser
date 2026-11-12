@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="root" styleClass="app-root"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1">
+
+    <top>
+        <VBox>
+            <MenuBar fx:id="menuBar">
+                <Menu text="_File">
+                    <MenuItem text="_New document" onAction="#onNewDocument" accelerator="Shortcut+N"/>
+                    <MenuItem text="_Open…" onAction="#onOpen" accelerator="Shortcut+O"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem fx:id="saveMenuItem" text="_Save" onAction="#onSave" accelerator="Shortcut+S"/>
+                    <MenuItem fx:id="saveAsMenuItem" text="Save _as…" onAction="#onSaveAs"
+                              accelerator="Shortcut+Shift+S"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem text="E_xit" onAction="#onExit"/>
+                </Menu>
+                <Menu text="_Records">
+                    <MenuItem fx:id="newRecordMenuItem" text="New record" onAction="#onNewRecord"
+                              accelerator="Shortcut+Shift+N"/>
+                    <MenuItem fx:id="deleteRecordMenuItem" text="Delete record" onAction="#onDeleteRecord"
+                              accelerator="Shortcut+DELETE"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem text="Find…" onAction="#onFocusSearch" accelerator="Shortcut+F"/>
+                    <MenuItem fx:id="findNextMenuItem" text="Find next" onAction="#onSearchNext" accelerator="F3"/>
+                    <MenuItem fx:id="findPreviousMenuItem" text="Find previous" onAction="#onSearchPrevious"
+                              accelerator="Shift+F3"/>
+                </Menu>
+                <Menu text="_View">
+                    <CheckMenuItem fx:id="darkThemeMenuItem" text="Dark theme" onAction="#onToggleTheme"/>
+                    <SeparatorMenuItem/>
+                    <MenuItem text="Expand tree" onAction="#onExpandAll"/>
+                    <MenuItem text="Collapse tree" onAction="#onCollapseAll"/>
+                </Menu>
+                <Menu fx:id="helpMenu" text="_Help">
+                    <MenuItem text="About DOM Parser" onAction="#onAbout"/>
+                </Menu>
+            </MenuBar>
+
+            <ToolBar fx:id="toolBar" styleClass="app-toolbar">
+                <Button fx:id="newDocumentButton" text="New" onAction="#onNewDocument" styleClass="tool-button">
+                    <tooltip><Tooltip text="New document (Ctrl+N)"/></tooltip>
+                </Button>
+                <Button fx:id="openButton" text="Open" onAction="#onOpen" styleClass="tool-button">
+                    <tooltip><Tooltip text="Open an XML file (Ctrl+O)"/></tooltip>
+                </Button>
+                <Button fx:id="saveButton" text="Save" onAction="#onSave" styleClass="tool-button">
+                    <tooltip><Tooltip text="Save (Ctrl+S)"/></tooltip>
+                </Button>
+                <Separator orientation="VERTICAL"/>
+                <Button fx:id="newRecordButton" text="New record" onAction="#onNewRecord" styleClass="tool-button">
+                    <tooltip><Tooltip text="Start a new record (Ctrl+Shift+N)"/></tooltip>
+                </Button>
+                <Button fx:id="deleteButton" text="Delete" onAction="#onDeleteRecord"
+                        styleClass="tool-button, danger">
+                    <tooltip><Tooltip text="Delete the selected record (Ctrl+Delete)"/></tooltip>
+                </Button>
+                <Separator orientation="VERTICAL"/>
+                <!-- Feature toolbar items are inserted here, before the spacer. -->
+                <Pane fx:id="toolbarSpacer" HBox.hgrow="ALWAYS"/>
+                <HBox styleClass="search-box" alignment="CENTER_LEFT" spacing="4">
+                    <Label fx:id="searchIcon" styleClass="search-icon"/>
+                    <TextField fx:id="searchField" promptText="Search records…" styleClass="search-field"/>
+                    <Label fx:id="searchCountLabel" styleClass="search-count"/>
+                    <Button fx:id="searchPreviousButton" onAction="#onSearchPrevious" styleClass="icon-button">
+                        <tooltip><Tooltip text="Previous match (Shift+F3)"/></tooltip>
+                    </Button>
+                    <Button fx:id="searchNextButton" onAction="#onSearchNext" styleClass="icon-button">
+                        <tooltip><Tooltip text="Next match (F3 / Enter)"/></tooltip>
+                    </Button>
+                </HBox>
+            </ToolBar>
+        </VBox>
+    </top>
+
+    <center>
+        <StackPane>
+            <SplitPane fx:id="workspace" dividerPositions="0.26, 0.69" styleClass="workspace">
+                <VBox styleClass="card" minWidth="230">
+                    <VBox styleClass="card-header">
+                        <Label text="Document tree" styleClass="card-title"/>
+                        <Label fx:id="treeSubtitle" styleClass="card-subtitle"/>
+                    </VBox>
+                    <TreeView fx:id="documentTree" VBox.vgrow="ALWAYS" styleClass="document-tree"/>
+                </VBox>
+
+                <VBox styleClass="card" minWidth="340">
+                    <TabPane fx:id="centerTabs" tabClosingPolicy="UNAVAILABLE" VBox.vgrow="ALWAYS"
+                             styleClass="center-tabs">
+                        <Tab text="Records">
+                            <TableView fx:id="recordTable" styleClass="record-table"/>
+                        </Tab>
+                        <Tab fx:id="xmlTab" text="XML source">
+                            <TextArea fx:id="xmlPreview" editable="false" wrapText="false" styleClass="xml-preview"/>
+                        </Tab>
+                    </TabPane>
+                </VBox>
+
+                <VBox styleClass="card" minWidth="320">
+                    <VBox styleClass="card-header">
+                        <Label fx:id="formTitle" text="Details" styleClass="card-title"/>
+                        <Label fx:id="formSubtitle" styleClass="card-subtitle" wrapText="true"/>
+                    </VBox>
+                    <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS" styleClass="form-scroll">
+                        <VBox fx:id="formContainer" styleClass="form"/>
+                    </ScrollPane>
+                    <HBox styleClass="card-footer" spacing="8" alignment="CENTER_RIGHT">
+                        <Button fx:id="clearButton" text="Clear" onAction="#onNewRecord" styleClass="secondary"
+                                minWidth="-Infinity"/>
+                        <Pane HBox.hgrow="ALWAYS"/>
+                        <Button fx:id="addButton" text="Add as new" onAction="#onAddRecord" styleClass="secondary"
+                                minWidth="-Infinity"/>
+                        <Button fx:id="applyButton" text="Save changes" onAction="#onApplyChanges"
+                                styleClass="primary" minWidth="-Infinity"/>
+                    </HBox>
+                </VBox>
+            </SplitPane>
+
+            <VBox fx:id="emptyState" styleClass="empty-state" alignment="CENTER" spacing="14">
+                <Label text="&lt;/&gt;" styleClass="empty-logo"/>
+                <Label text="DOM Parser" styleClass="empty-title"/>
+                <Label text="Open an XML file to explore it as a tree, edit records, search, and encrypt nodes."
+                       styleClass="empty-text" wrapText="true" maxWidth="420"/>
+                <HBox alignment="CENTER" spacing="10">
+                    <Button text="Open XML file…" onAction="#onOpen" styleClass="primary"/>
+                    <Button text="New document" onAction="#onNewDocument" styleClass="secondary"/>
+                </HBox>
+                <Label text="Tip: you can also drop an .xml file anywhere in this window." styleClass="empty-hint"/>
+            </VBox>
+        </StackPane>
+    </center>
+
+    <bottom>
+        <HBox styleClass="status-bar" alignment="CENTER_LEFT" spacing="14">
+            <ProgressIndicator fx:id="busyIndicator" styleClass="busy-indicator"/>
+            <Label fx:id="statusLabel" text="Ready"/>
+            <Pane HBox.hgrow="ALWAYS"/>
+            <Label fx:id="encryptedLabel" styleClass="encrypted-count"/>
+            <Label fx:id="schemaLabel"/>
+            <Label fx:id="countLabel"/>
+            <Label fx:id="dirtyLabel" styleClass="dirty-indicator"/>
+        </HBox>
+    </bottom>
+</BorderPane>
