@@ -122,6 +122,10 @@ different `EncryptionService` there, or add a new service for features to use.
   This is deliberate for now. Storing keys would be a separate feature.
 - For safety, parsing rejects `DOCTYPE` declarations (this prevents XXE attacks).
 
+## License
+
+Released under the [MIT License](LICENSE).
+
 ## Contact
 
 #### [Ali Ibrahim](mailto:ali.ibrahi.2@lit-co.net)
