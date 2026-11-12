@@ -17,16 +17,29 @@ import java.util.ServiceLoader;
 /** Wires services, the main view and all {@link Feature}s together. */
 public class DomParserApp extends Application {
 
+    /** URL of the application stylesheet, also applied to dialogs. */
     public static final String STYLESHEET =
             Objects.requireNonNull(DomParserApp.class.getResource("app.css")).toExternalForm();
 
     private AppServices services;
 
+    /** Created by the JavaFX launcher. */
+    public DomParserApp() {
+    }
+
+    /** Creates the shared services before the UI starts. */
     @Override
     public void init() {
         services = AppServices.createDefault();
     }
 
+    /**
+     * Loads the main view, installs every {@link Feature} and shows the window. Opens the first command-line
+     * argument as a file, if one was given.
+     *
+     * @param stage the primary stage
+     * @throws IOException if the main view cannot be loaded
+     */
     @Override
     public void start(Stage stage) throws IOException {
         FXMLLoader loader = new FXMLLoader(DomParserApp.class.getResource("main-view.fxml"));
@@ -47,6 +60,7 @@ public class DomParserApp extends Application {
         getParameters().getUnnamed().stream().findFirst().map(Path::of).ifPresent(controller::open);
     }
 
+    /** Stops the background worker when the application exits. */
     @Override
     public void stop() {
         services.background().shutdownNow();

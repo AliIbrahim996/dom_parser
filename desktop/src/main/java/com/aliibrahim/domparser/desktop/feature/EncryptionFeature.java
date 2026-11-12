@@ -17,11 +17,17 @@ import org.jdom2.Element;
 /** "Security" menu: XML Encryption of a field, a record or the whole document, and decryption within the session. */
 public final class EncryptionFeature implements Feature {
 
+    /** Created by {@link java.util.ServiceLoader}. */
+    public EncryptionFeature() {
+    }
+
+    /** Returns {@code "encryption"}. */
     @Override
     public String id() {
         return "encryption";
     }
 
+    /** Adds the Security menu items and the Encrypt toolbar button, enabled only when they apply. */
     @Override
     public void install(FeatureContext ctx) {
         EncryptionService encryption = ctx.services().encryption();
@@ -59,6 +65,7 @@ public final class EncryptionFeature implements Feature {
         ctx.addToolbarItem(button);
     }
 
+    /** Encrypts the selected tree element after confirmation (whole document when the root is selected). */
     private void encryptSelected(FeatureContext ctx, EncryptionService encryption) {
         XmlDocumentModel model = ctx.documentProperty().get();
         Element target = ctx.selectedElementProperty().get();
@@ -85,6 +92,7 @@ public final class EncryptionFeature implements Feature {
         });
     }
 
+    /** Encrypts the whole document after confirmation. */
     private void encryptDocument(FeatureContext ctx, EncryptionService encryption) {
         XmlDocumentModel model = ctx.documentProperty().get();
         if (model == null || !ctx.dialogs().confirm("Encrypt the whole document?",
@@ -100,6 +108,7 @@ public final class EncryptionFeature implements Feature {
         });
     }
 
+    /** Decrypts every node encrypted in this session; tells the user when there is nothing to decrypt. */
     private void decryptAll(FeatureContext ctx, EncryptionService encryption) {
         XmlDocumentModel model = ctx.documentProperty().get();
         if (model == null) {

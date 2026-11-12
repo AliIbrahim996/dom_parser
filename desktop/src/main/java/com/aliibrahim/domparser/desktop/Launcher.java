@@ -8,9 +8,15 @@ import javafx.application.Application;
  */
 public final class Launcher {
 
+    /** Entry point only; not instantiable. */
     private Launcher() {
     }
 
+    /**
+     * Starts the JavaFX application.
+     *
+     * @param args optional path of an XML file to open
+     */
     public static void main(String[] args) {
         Application.launch(DomParserApp.class, args);
     }

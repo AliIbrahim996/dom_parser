@@ -27,6 +27,16 @@ forms, search them, and protect nodes with W3C XML Encryption.
 
 On Windows use `gradlew.bat`. You can pass a file to open: `./gradlew run --args="users.xml"`.
 
+`./gradlew javadoc` builds the API docs and fails if a public class or method is undocumented.
+
+### Continuous integration
+
+[`.github/workflows/build.yml`](.github/workflows/build.yml) runs on every pull request, on pushes to `main` and on
+`v*` tags. It builds, tests and checks the docs on Linux, Windows and macOS, then uploads a ready-to-run zip per
+platform (`dom-parser-linux`, `dom-parser-windows`, `dom-parser-macos`) as workflow artifacts. JavaFX includes
+native libraries, so use the zip for your OS. Unzip it and run `bin/dom-parser` (or `bin\dom-parser.bat` on Windows).
+A JDK or JRE 21+ must be installed.
+
 ## Project structure
 
 ```

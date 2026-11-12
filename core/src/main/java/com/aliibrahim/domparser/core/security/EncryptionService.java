@@ -9,15 +9,36 @@ import org.jdom2.Element;
  */
 public interface EncryptionService {
 
-    /** Replaces the root element with an {@code EncryptedData} element. */
+    /**
+     * Encrypts the whole document: the root element is replaced by an {@code EncryptedData} element.
+     *
+     * @param document the document to encrypt; not modified
+     * @return a new, encrypted document
+     */
     Document encryptDocument(Document document);
 
-    /** Replaces {@code target} (an element of {@code document}) with an {@code EncryptedData} element. */
+    /**
+     * Encrypts one element: {@code target} is replaced by an {@code EncryptedData} element.
+     *
+     * @param document the document that contains {@code target}; not modified
+     * @param target   the element to encrypt
+     * @return a new document with the element encrypted
+     */
     Document encryptElement(Document document, Element target);
 
-    /** Decrypts every {@code EncryptedData} element that was produced with this service's key. */
+    /**
+     * Decrypts every {@code EncryptedData} element that this service's key can open.
+     *
+     * @param document the document to decrypt; not modified
+     * @return a new document without encrypted content
+     */
     Document decryptAll(Document document);
 
-    /** Number of {@code EncryptedData} elements in the document. */
+    /**
+     * Counts the encrypted parts of a document.
+     *
+     * @param document the document to inspect
+     * @return the number of {@code EncryptedData} elements
+     */
     int countEncrypted(Document document);
 }

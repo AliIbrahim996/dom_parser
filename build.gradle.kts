@@ -28,6 +28,16 @@ subprojects {
         options.compilerArgs.add("-Xlint:all,-serial,-processing")
     }
 
+    tasks.withType<Javadoc>().configureEach {
+        // Fail on missing or broken docs for the public API.
+        (options as StandardJavadocDocletOptions).apply {
+            encoding = "UTF-8"
+            addBooleanOption("Xdoclint:all", true)
+            addBooleanOption("Werror", true)
+            quiet()
+        }
+    }
+
     tasks.withType<Test>().configureEach {
         useJUnitPlatform()
     }

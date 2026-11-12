@@ -10,8 +10,17 @@ package com.aliibrahim.domparser.desktop.feature;
  */
 public interface Feature {
 
-    /** Short unique id, used in logs and preferences. */
+    /**
+     * A short unique id, used in logs and preferences.
+     *
+     * @return the feature id
+     */
     String id();
 
+    /**
+     * Called once on the UI thread at start-up. Add menu items, toolbar items and listeners here.
+     *
+     * @param context access to the main window and the shared services
+     */
     void install(FeatureContext context);
 }

@@ -20,20 +20,38 @@ public final class DocumentTreeCell extends TreeCell<Element> {
     private final BiPredicate<Element, String> onEdit;
     private TextField editor;
 
-    /** @param onEdit applies a new text value; returns false to keep the editor open (e.g. validation failed). */
+    /**
+     * Creates a cell.
+     *
+     * @param onEdit applies a new text value to an element; returns false to keep the editor open (e.g. when
+     *               validation failed)
+     */
     public DocumentTreeCell(BiPredicate<Element, String> onEdit) {
         this.onEdit = onEdit;
         getStyleClass().add("document-tree-cell");
     }
 
+    /**
+     * Whether the element's text can be edited in place: it has no child elements and is not encrypted.
+     *
+     * @param element the element to test
+     * @return true for an editable leaf
+     */
     public static boolean isEditableLeaf(Element element) {
         return element.getChildren().isEmpty() && !isEncrypted(element);
     }
 
+    /**
+     * Whether the element is encrypted or sits inside encrypted content.
+     *
+     * @param element the element to test
+     * @return true when it is or is inside an {@code EncryptedData} element
+     */
     public static boolean isEncrypted(Element element) {
         return XmlEncryptionService.isWithinEncryptedData(element);
     }
 
+    /** Shows the editor while editing, otherwise the rendered element. */
     @Override
     protected void updateItem(Element element, boolean empty) {
         super.updateItem(element, empty);
@@ -49,6 +67,7 @@ public final class DocumentTreeCell extends TreeCell<Element> {
         setGraphic(render(element));
     }
 
+    /** Builds the cell graphic: a lock for encrypted data, otherwise tag, attributes and (for leaves) the text. */
     private HBox render(Element element) {
         HBox box = new HBox(6);
         box.getStyleClass().add("node");
@@ -79,10 +98,15 @@ public final class DocumentTreeCell extends TreeCell<Element> {
         return box;
     }
 
+    /** Formats an attribute as {@code name="value"}. */
     private String formatAttribute(Attribute a) {
         return a.getQualifiedName() + "=\"" + a.getValue() + "\"";
     }
 
+    /**
+     * Opens an inline text editor for editable leaves. Enter applies the value through the edit callback, and
+     * Escape or leaving the field cancels.
+     */
     @Override
     public void startEdit() {
         Element element = getItem();
@@ -115,12 +139,14 @@ public final class DocumentTreeCell extends TreeCell<Element> {
         editor.selectAll();
     }
 
+    /** A label styled as an element tag. */
     private static Label label(String name) {
         Label l = new Label(name);
         l.getStyleClass().add("tag");
         return l;
     }
 
+    /** Closes the editor without applying the value. */
     @Override
     public void cancelEdit() {
         super.cancelEdit();
@@ -128,6 +154,7 @@ public final class DocumentTreeCell extends TreeCell<Element> {
         updateItem(getItem(), getItem() == null);
     }
 
+    /** Closes the editor after the value was applied. */
     @Override
     public void commitEdit(Element newValue) {
         super.commitEdit(newValue);

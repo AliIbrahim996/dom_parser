@@ -115,10 +115,16 @@ public final class MainController implements FeatureContext {
     @FXML private Label countLabel;
     @FXML private Label dirtyLabel;
 
+    /**
+     * Creates the controller; FXML fields are injected when the view is loaded.
+     *
+     * @param services the shared application services
+     */
     public MainController(AppServices services) {
         this.services = services;
     }
 
+    /** Called by FXMLLoader: sets icons, cell factories, listeners and bindings, and shows the empty state. */
     @FXML
     private void initialize() {
         form = new RecordForm(formContainer);
@@ -165,6 +171,7 @@ public final class MainController implements FeatureContext {
         setDocument(null);
     }
 
+    /** Binds visibility and the disabled state of controls to the document, selection, search and busy state. */
     private void bindEnablement() {
         BooleanBinding noDocument = document.isNull();
         BooleanBinding noSchema = Bindings.createBooleanBinding(
@@ -195,7 +202,13 @@ public final class MainController implements FeatureContext {
         findPreviousMenuItem.disableProperty().bind(noSchema.or(noMatches));
     }
 
-    /** Called once by the application after the scene is shown-ready. */
+    /**
+     * Connects the controller to its window: the close prompt, theme, drag-and-drop and features. Called once
+     * by the application after the view is loaded.
+     *
+     * @param stage    the main window
+     * @param features the features to install, in order; one that fails to install is skipped and logged
+     */
     public void attach(Stage stage, List<Feature> features) {
         this.stage = stage;
         stage.setOnCloseRequest(e -> {
@@ -218,6 +231,7 @@ public final class MainController implements FeatureContext {
 
     // ---- document lifecycle ---------------------------------------------------------------------------------------
 
+    /** Makes {@code model} the open document (or none), resetting search, form, table and tree. */
     private void setDocument(XmlDocumentModel model) {
         XmlDocumentModel old = document.get();
         if (old != null) {
@@ -238,6 +252,10 @@ public final class MainController implements FeatureContext {
         showRecord(null);
     }
 
+    /**
+     * Keeps the views in sync after a change: rebuilds the tree on structural changes, refreshes it on content
+     * changes, and recomputes search results while keeping the current position.
+     */
     private void onDocumentChanged(XmlDocumentModel model, DocumentChange change) {
         if (change != DocumentChange.SAVED) {
             // Matches may have changed: recompute, but stay at the same position in the result list.
@@ -261,6 +279,7 @@ public final class MainController implements FeatureContext {
         refreshAll();
     }
 
+    /** Updates the table rows, status bar labels, XML preview and window title from the model. */
     private void refreshAll() {
         XmlDocumentModel model = document.get();
         if (model != null) {
@@ -291,11 +310,13 @@ public final class MainController implements FeatureContext {
         updateTitle();
     }
 
+    /** Shows the current document as pretty-printed XML in the source tab. */
     private void refreshXmlPreview() {
         XmlDocumentModel model = document.get();
         xmlPreview.setText(model == null ? "" : XmlIO.toString(model.document()));
     }
 
+    /** Shows the file name, with a dot when there are unsaved changes, in the window title. */
     private void updateTitle() {
         if (stage == null) {
             return;
@@ -308,12 +329,14 @@ public final class MainController implements FeatureContext {
         }
     }
 
+    /** The document's file name, or {@code "Untitled.xml"} if it has never been saved. */
     private static String documentName(XmlDocumentModel model) {
         return model.file().map(p -> p.getFileName().toString()).orElse("Untitled.xml");
     }
 
     // ---- tree -------------------------------------------------------------------------------------------------------
 
+    /** Rebuilds the tree from the model, keeping the expanded nodes and the selection where they still exist. */
     private void rebuildTree() {
         XmlDocumentModel model = document.get();
         Element previouslySelected = selectedElement.get();
@@ -346,6 +369,7 @@ public final class MainController implements FeatureContext {
         }
     }
 
+    /** Creates the tree item for {@code element} and its children (encrypted data is shown as one leaf). */
     private TreeItem<Element> buildItem(Element element, Set<Element> expanded) {
         TreeItem<Element> item = new TreeItem<>(element);
         treeIndex.put(element, item);
@@ -358,6 +382,7 @@ public final class MainController implements FeatureContext {
         return item;
     }
 
+    /** Selects {@code element} in the tree, expanding its ancestors and scrolling it into view. */
     private void selectInTree(Element element) {
         TreeItem<Element> item = treeIndex.get(element);
         if (item == null) {
@@ -373,6 +398,7 @@ public final class MainController implements FeatureContext {
         }
     }
 
+    /** Callback for in-tree editing; shows the validation message and keeps the editor open if the value is invalid. */
     private boolean editElementText(Element element, String text) {
         try {
             document.get().setElementText(element, text);
@@ -385,11 +411,13 @@ public final class MainController implements FeatureContext {
         }
     }
 
+    /** Expands every tree node. */
     @FXML
     private void onExpandAll() {
         treeIndex.values().forEach(i -> i.setExpanded(true));
     }
 
+    /** Collapses the tree down to the root element's children. */
     @FXML
     private void onCollapseAll() {
         treeIndex.values().forEach(i -> i.setExpanded(false));
@@ -400,6 +428,7 @@ public final class MainController implements FeatureContext {
 
     // ---- table & form -------------------------------------------------------------------------------------------------
 
+    /** Creates an id column plus one column per schema field; no columns for generic XML. */
     private void rebuildTable(RecordSchema schema) {
         recordTable.getColumns().clear();
         if (schema == null) {
@@ -428,10 +457,12 @@ public final class MainController implements FeatureContext {
         }
     }
 
+    /** Whether any field of {@code record} is encrypted. */
     private static boolean hasEncryptedChild(RecordNode record) {
         return record.element().getChildren().stream().anyMatch(XmlEncryptionService::isEncryptedData);
     }
 
+    /** Shows {@code record} in the form and selects it in the table; {@code null} shows an empty "new record" form. */
     private void showRecord(RecordNode record) {
         syncingSelection = true;
         if (record == null) {
@@ -462,6 +493,7 @@ public final class MainController implements FeatureContext {
         }
     }
 
+    /** Clears the selection and starts an empty form for a new record. */
     @FXML
     private void onNewRecord() {
         documentTree.getSelectionModel().clearSelection();
@@ -470,6 +502,7 @@ public final class MainController implements FeatureContext {
         form.focusFirst();
     }
 
+    /** Adds the form values as a new record, or shows validation errors. */
     @FXML
     private void onAddRecord() {
         XmlDocumentModel model = document.get();
@@ -486,6 +519,7 @@ public final class MainController implements FeatureContext {
         }
     }
 
+    /** Writes the form values into the selected record, or shows validation errors. */
     @FXML
     private void onApplyChanges() {
         XmlDocumentModel model = document.get();
@@ -503,6 +537,7 @@ public final class MainController implements FeatureContext {
         }
     }
 
+    /** Deletes the selected record after confirmation. */
     @FXML
     private void onDeleteRecord() {
         XmlDocumentModel model = document.get();
@@ -518,6 +553,7 @@ public final class MainController implements FeatureContext {
 
     // ---- search -----------------------------------------------------------------------------------------------------
 
+    /** Runs the search for {@code text} and updates the match count; blank text clears the search. */
     private void updateSearch(String text) {
         XmlDocumentModel model = document.get();
         if (model == null || text == null || text.isBlank()) {
@@ -532,12 +568,14 @@ public final class MainController implements FeatureContext {
         searchCountLabel.setText(n == 0 ? "No matches" : n + (n == 1 ? " match" : " matches"));
     }
 
+    /** Focuses the search box and selects its text. */
     @FXML
     private void onFocusSearch() {
         searchField.requestFocus();
         searchField.selectAll();
     }
 
+    /** Jumps to the next match. */
     @FXML
     private void onSearchNext() {
         if (searchCursor == null) {
@@ -548,6 +586,7 @@ public final class MainController implements FeatureContext {
         }
     }
 
+    /** Jumps to the previous match. */
     @FXML
     private void onSearchPrevious() {
         if (searchCursor == null) {
@@ -558,6 +597,7 @@ public final class MainController implements FeatureContext {
         }
     }
 
+    /** Selects the matching field in the tree and shows the position in the status bar. */
     private void showMatch(SearchMatch match) {
         Element fieldElement = match.record().element().getChild(match.field());
         selectInTree(fieldElement != null ? fieldElement : match.record().element());
@@ -567,6 +607,7 @@ public final class MainController implements FeatureContext {
 
     // ---- file actions -----------------------------------------------------------------------------------------------
 
+    /** Creates a new empty document, asking for the document type when several schemas are registered. */
     @FXML
     private void onNewDocument() {
         if (!confirmDiscardChanges()) {
@@ -591,6 +632,7 @@ public final class MainController implements FeatureContext {
         });
     }
 
+    /** Asks for an XML file and opens it, after handling unsaved changes. */
     @FXML
     private void onOpen() {
         if (!confirmDiscardChanges()) {
@@ -603,7 +645,11 @@ public final class MainController implements FeatureContext {
         }
     }
 
-    /** Opens {@code path} in the background (no unsaved-changes check). */
+    /**
+     * Opens {@code path} in the background. Does not check for unsaved changes; callers do that first.
+     *
+     * @param path the XML file to open
+     */
     public void open(Path path) {
         services.preferences().put(PREF_LAST_DIR, path.toAbsolutePath().getParent().toString());
         runTask("Opening " + path.getFileName(), () -> XmlDocumentModel.open(path, services.schemas()), model -> {
@@ -613,16 +659,23 @@ public final class MainController implements FeatureContext {
         });
     }
 
+    /** Saves to the current file (asks for one if the document is new). */
     @FXML
     private void onSave() {
         saveDocument(false);
     }
 
+    /** Asks for a file and saves the document there. */
     @FXML
     private void onSaveAs() {
         saveDocument(true);
     }
 
+    /**
+     * Saves the document, asking for a file when {@code chooseFile} is true or the document is new.
+     *
+     * @return true when the document was saved
+     */
     private boolean saveDocument(boolean chooseFile) {
         XmlDocumentModel model = document.get();
         if (model == null) {
@@ -649,6 +702,7 @@ public final class MainController implements FeatureContext {
         }
     }
 
+    /** A file chooser for XML files that starts in the last used directory. */
     private FileChooser xmlChooser(String title) {
         FileChooser chooser = new FileChooser();
         chooser.setTitle(title);
@@ -675,6 +729,7 @@ public final class MainController implements FeatureContext {
         };
     }
 
+    /** Closes the window after handling unsaved changes. */
     @FXML
     private void onExit() {
         if (confirmDiscardChanges()) {
@@ -683,6 +738,7 @@ public final class MainController implements FeatureContext {
         }
     }
 
+    /** Opens a file dropped anywhere on the window, after handling unsaved changes. */
     private void installDragAndDrop() {
         root.setOnDragOver(e -> {
             if (e.getDragboard().hasFiles()) {
@@ -709,12 +765,14 @@ public final class MainController implements FeatureContext {
 
     // ---- view -------------------------------------------------------------------------------------------------------
 
+    /** Switches between light and dark theme and remembers the choice. */
     @FXML
     private void onToggleTheme() {
         services.preferences().putBoolean(PREF_DARK, darkThemeMenuItem.isSelected());
         applyTheme();
     }
 
+    /** Applies the theme selected in the View menu. */
     private void applyTheme() {
         root.getStyleClass().remove("dark");
         if (darkThemeMenuItem.isSelected()) {
@@ -722,6 +780,7 @@ public final class MainController implements FeatureContext {
         }
     }
 
+    /** Shows the About dialog. */
     @FXML
     private void onAbout() {
         dialogs.info("DOM Parser 2.0",
@@ -731,26 +790,35 @@ public final class MainController implements FeatureContext {
 
     // ---- FeatureContext -----------------------------------------------------------------------------------------------
 
+    /** {@inheritDoc} */
     @Override
     public AppServices services() {
         return services;
     }
 
+    /** {@inheritDoc} */
     @Override
     public ReadOnlyObjectProperty<XmlDocumentModel> documentProperty() {
         return document.getReadOnlyProperty();
     }
 
+    /** {@inheritDoc} */
     @Override
     public ReadOnlyObjectProperty<Element> selectedElementProperty() {
         return selectedElement.getReadOnlyProperty();
     }
 
+    /** {@inheritDoc} */
     @Override
     public ReadOnlyBooleanProperty busyProperty() {
         return busy.getReadOnlyProperty();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Menus are matched by name, ignoring case and mnemonic underscores.
+     */
     @Override
     public void addMenuItem(String menuName, MenuItem item) {
         Menu menu = menuBar.getMenus().stream()
@@ -764,21 +832,29 @@ public final class MainController implements FeatureContext {
         menu.getItems().add(item);
     }
 
+    /** {@inheritDoc} */
     @Override
     public void addToolbarItem(Node node) {
         toolBar.getItems().add(toolBar.getItems().indexOf(toolbarSpacer), node);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Dialogs dialogs() {
         return dialogs;
     }
 
+    /** {@inheritDoc} */
     @Override
     public void setStatus(String message) {
         statusLabel.setText(message);
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>Tasks run one at a time on the shared background thread, and {@link #busyProperty()} is true meanwhile.
+     */
     @Override
     public <T> void runTask(String description, Callable<T> work, Consumer<T> onSuccess) {
         Task<T> task = new Task<>() {

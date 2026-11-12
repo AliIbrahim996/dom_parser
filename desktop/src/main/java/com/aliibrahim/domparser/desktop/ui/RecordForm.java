@@ -24,10 +24,20 @@ public final class RecordForm {
     private final Map<String, Label> errors = new LinkedHashMap<>();
     private RecordSchema schema;
 
+    /**
+     * Creates a form that renders into {@code container}.
+     *
+     * @param container the box that receives the field groups
+     */
     public RecordForm(VBox container) {
         this.container = container;
     }
 
+    /**
+     * Rebuilds the inputs for {@code schema}. With {@code null}, shows a hint that the document has no form.
+     *
+     * @param schema the schema to build the form from, or {@code null}
+     */
     public void setSchema(RecordSchema schema) {
         this.schema = schema;
         inputs.clear();
@@ -59,6 +69,7 @@ public final class RecordForm {
         }
     }
 
+    /** A text field (digits only for integers) or a combo box for choices. */
     private Control createInput(FieldDefinition field) {
         return switch (field.type()) {
             case TEXT -> {
@@ -81,22 +92,38 @@ public final class RecordForm {
         };
     }
 
+    /**
+     * Fills the inputs and clears any error messages.
+     *
+     * @param values field name to value; missing fields are shown empty
+     */
     public void show(Map<String, String> values) {
         clearErrors();
         inputs.forEach((name, input) -> setValue(input, values.getOrDefault(name, "")));
     }
 
+    /** Empties every input and clears any error messages. */
     public void clear() {
         clearErrors();
         inputs.values().forEach(input -> setValue(input, ""));
     }
 
+    /**
+     * Reads the current input values.
+     *
+     * @return field name to value, in schema order
+     */
     public Map<String, String> values() {
         Map<String, String> values = new LinkedHashMap<>();
         inputs.forEach((name, input) -> values.put(name, getValue(input)));
         return values;
     }
 
+    /**
+     * Shows an error under each named field and focuses the first invalid input.
+     *
+     * @param fieldErrors field name to error message, e.g. from {@code ValidationException#errors()}
+     */
     public void showErrors(Map<String, String> fieldErrors) {
         clearErrors();
         fieldErrors.forEach((name, message) -> {
@@ -112,6 +139,7 @@ public final class RecordForm {
         fieldErrors.keySet().stream().map(inputs::get).filter(i -> i != null).findFirst().ifPresent(Node::requestFocus);
     }
 
+    /** Hides every error message and the invalid styling. */
     public void clearErrors() {
         errors.values().forEach(l -> {
             l.setManaged(false);
@@ -120,14 +148,21 @@ public final class RecordForm {
         inputs.values().forEach(i -> i.getStyleClass().remove("invalid"));
     }
 
+    /** Moves keyboard focus to the first input. */
     public void focusFirst() {
         inputs.values().stream().findFirst().ifPresent(Node::requestFocus);
     }
 
+    /**
+     * Whether a schema is set.
+     *
+     * @return true when the form has inputs
+     */
     public boolean hasSchema() {
         return schema != null;
     }
 
+    /** Writes a value into a text field or combo box (a combo box selects the option matching case-insensitively). */
     @SuppressWarnings("unchecked")
     private static void setValue(Control input, String value) {
         if (input instanceof TextField tf) {
@@ -139,6 +174,7 @@ public final class RecordForm {
         }
     }
 
+    /** Reads the value of a text field or combo box; an empty string when nothing is entered. */
     private static String getValue(Control input) {
         if (input instanceof TextField tf) {
             return tf.getText();

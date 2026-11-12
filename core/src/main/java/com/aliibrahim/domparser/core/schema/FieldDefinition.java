@@ -15,6 +15,7 @@ import java.util.Optional;
  */
 public record FieldDefinition(String name, String label, FieldType type, List<String> options, boolean required) {
 
+    /** Checks the required components and makes {@code options} an unmodifiable copy. */
     public FieldDefinition {
         Objects.requireNonNull(name, "name");
         Objects.requireNonNull(label, "label");
@@ -22,24 +23,55 @@ public record FieldDefinition(String name, String label, FieldType type, List<St
         options = List.copyOf(options == null ? List.of() : options);
     }
 
+    /**
+     * A required free-text field.
+     *
+     * @param name  the XML element name
+     * @param label the label shown to people
+     * @return the field definition
+     */
     public static FieldDefinition text(String name, String label) {
         return new FieldDefinition(name, label, FieldType.TEXT, List.of(), true);
     }
 
+    /**
+     * A required whole-number field (up to 9 digits, optionally negative).
+     *
+     * @param name  the XML element name
+     * @param label the label shown to people
+     * @return the field definition
+     */
     public static FieldDefinition integer(String name, String label) {
         return new FieldDefinition(name, label, FieldType.INTEGER, List.of(), true);
     }
 
+    /**
+     * A required field whose value must be one of {@code options} (compared case-insensitively).
+     *
+     * @param name    the XML element name
+     * @param label   the label shown to people
+     * @param options the allowed values, in display order
+     * @return the field definition
+     */
     public static FieldDefinition choice(String name, String label, String... options) {
         return new FieldDefinition(name, label, FieldType.CHOICE, List.of(options), true);
     }
 
-    /** A copy of this field that accepts empty values. */
+    /**
+     * A copy of this field that accepts empty values.
+     *
+     * @return the optional copy
+     */
     public FieldDefinition optional() {
         return new FieldDefinition(name, label, type, options, false);
     }
 
-    /** @return an error message if {@code value} is not acceptable for this field. */
+    /**
+     * Checks a value against this field's rules.
+     *
+     * @param value the value to check; {@code null} counts as empty
+     * @return an error message people can read, or empty when the value is acceptable
+     */
     public Optional<String> validate(String value) {
         String v = value == null ? "" : value.trim();
         if (v.isEmpty()) {

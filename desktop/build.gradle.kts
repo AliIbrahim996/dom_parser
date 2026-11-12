@@ -20,6 +20,15 @@ application {
     applicationName = "dom-parser"
 }
 
+distributions {
+    main {
+        // Ship the sample document with the app.
+        contents {
+            from(rootProject.file("samples")) { into("samples") }
+        }
+    }
+}
+
 tasks.named<JavaExec>("run") {
     // Start in the samples folder so the open dialog lands next to users.xml.
     workingDir = rootProject.file("samples")

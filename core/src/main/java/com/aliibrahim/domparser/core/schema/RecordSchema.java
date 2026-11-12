@@ -21,29 +21,66 @@ import java.util.Map;
  */
 public interface RecordSchema {
 
-    /** Stable identifier, e.g. {@code "users"}. */
+    /**
+     * A stable identifier, e.g. {@code "users"}.
+     *
+     * @return the schema id
+     */
     String id();
 
-    /** Name shown to people, e.g. {@code "Users"}. */
+    /**
+     * The name shown to people, e.g. {@code "Users"}.
+     *
+     * @return the display name
+     */
     String displayName();
 
+    /**
+     * The name of the document's root element, e.g. {@code "Users"}.
+     *
+     * @return the root element name
+     */
     String rootElement();
 
+    /**
+     * The name of each record element under the root, e.g. {@code "User"}.
+     *
+     * @return the record element name
+     */
     String recordElement();
 
-    /** Attribute holding the numeric record id. */
+    /**
+     * The attribute holding the numeric record id.
+     *
+     * @return the attribute name; {@code "id"} by default
+     */
     default String idAttribute() {
         return "id";
     }
 
+    /**
+     * The fields of a record, in display order.
+     *
+     * @return the field definitions
+     */
     List<FieldDefinition> fields();
 
-    /** Whether this schema understands {@code document}. The default matches on the root element name. */
+    /**
+     * Whether this schema understands {@code document}. The default matches on the root element name.
+     *
+     * @param document the loaded document
+     * @return true when this schema should be used for it
+     */
     default boolean supports(Document document) {
         return document.hasRootElement() && document.getRootElement().getName().equals(rootElement());
     }
 
-    /** Validates a full set of field values. Returns field name to error message; empty when valid. */
+    /**
+     * Validates a full set of field values.
+     *
+     * @param values field name to value; missing fields count as empty
+     * @return field name to error message, in field order; empty when everything is valid
+     */
     default Map<String, String> validate(Map<String, String> values) {
         Map<String, String> errors = new LinkedHashMap<>();
         for (FieldDefinition field : fields()) {
@@ -52,6 +89,13 @@ public interface RecordSchema {
         return errors;
     }
 
+    /**
+     * Looks up a field by element name.
+     *
+     * @param name the field name
+     * @return the field definition
+     * @throws IllegalArgumentException if this schema has no such field
+     */
     default FieldDefinition field(String name) {
         return fields().stream()
                 .filter(f -> f.name().equals(name))
